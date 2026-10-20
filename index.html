@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Festival Wishes</title>
+<meta name="theme-color" content="#d81b60">
+<meta name="description" content="Create festival wishes with shlokas in Telugu, English and Hindi and share them on WhatsApp and Instagram.">
+<style>
+:root{--bg:#fafafa;--fg:#1c1b1f;--surface:#fff;--line:#ddd;--accent:#d81b60;--accent-fg:#fff;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121212;--fg:#f1f1f1;--surface:#1e1e1e;--line:#333;--accent:#f06292;--accent-fg:#1c1b1f}}
+:root[data-theme="dark"]{--bg:#121212;--fg:#f1f1f1;--surface:#1e1e1e;--line:#333;--accent:#f06292;--accent-fg:#1c1b1f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:480px;margin:0 auto;padding:16px}
+h1{font-size:1.3rem;margin:4px 0 14px}
+label{display:block;font-size:.8rem;margin:10px 0 4px;opacity:.8}
+select,input{width:100%;padding:12px;font-size:1rem;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--fg)}
+button{font-size:1rem;padding:12px;border:0;border-radius:10px;background:var(--accent);color:var(--accent-fg);font-weight:600;cursor:pointer}
+button.alt{background:var(--surface);color:var(--fg);border:1px solid var(--line)}
+#gen{width:100%;margin-top:14px}
+#card{margin-top:16px;border-radius:20px;min-height:230px;padding:28px;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;font-size:1.1rem;font-weight:700;line-height:1.5;white-space:pre-wrap}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+#msg{min-height:1.2em;text-align:center;font-size:.85rem;margin-top:10px;opacity:.8}
+</style>
+</head>
+<body>
+<main>
+<h1>🎉 Festival Wishes</h1>
+<label for="fest">Festival</label><select id="fest"></select>
+<label for="lang">Language</label><select id="lang"><option value="te">తెలుగు (Telugu)</option><option value="en">English</option><option value="hi">हिन्दी (Hindi)</option></select>
+<button id="gen">✨ Generate wish</button>
+<div id="card">Tap Generate</div>
+<div class="row">
+<button id="wa">WhatsApp</button>
+<button id="ig">Instagram</button>
+<button id="share" class="alt">Share…</button>
+<button id="copy" class="alt">Copy</button>
+</div>
+<div id="msg"></div>
+</main>
+<script>
+// festival: [emoji, English, Telugu, Hindi] greetings
+const F={
+"Dasara":["🏹","Happy Dasara","దసరా శుభాకాంక్షలు","दशहरा की हार्दिक शुभकामनाएँ"],
+"Deepavali":["🪔","Happy Deepavali","దీపావళి శుభాకాంక్షలు","दीपावली की हार्दिक शुभकामनाएँ"],
+"Ugadi":["🌿","Happy Ugadi","ఉగాది శుభాకాంక్షలు","उगादी की हार्दिक शुभकामनाएँ"],
+"Sankranti":["🪁","Happy Sankranti","సంక్రాంతి శుభాకాంక్షలు","संक्रांति की हार्दिक शुभकामनाएँ"],
+"Vinayaka Chavithi":["🐘","Happy Vinayaka Chavithi","వినాయక చవితి శుభాకాంక్షలు","गणेश चतुर्थी की हार्दिक शुभकामनाएँ"],
+"Bathukamma":["🌼","Happy Bathukamma","బతుకమ్మ శుభాకాంక్షలు","बथुकम्मा की हार्दिक शुभकामनाएँ"],
+"Bonalu":["🥁","Happy Bonalu","బోనాల శుభాకాంక్షలు","बोनालू की हार्दिक शुभकामनाएँ"],
+"Sri Rama Navami":["🏹","Happy Sri Rama Navami","శ్రీరామ నవమి శుభాకాంక్షలు","राम नवमी की हार्दिक शुभकामनाएँ"],
+"Maha Shivaratri":["🔱","Happy Maha Shivaratri","మహాశివరాత్రి శుభాకాంక్షలు","महाशिवरात्रि की हार्दिक शुभकामनाएँ"],
+"Varalakshmi Vratham":["🪷","Happy Varalakshmi Vratham","వరలక్ష్మీ వ్రతం శుభాకాంక్షలు","वरलक्ष्मी व्रत की हार्दिक शुभकामनाएँ"],
+"Eid":["🌙","Eid Mubarak","ఈద్ ముబారక్","ईद मुबारक"],
+"Christmas":["🎄","Merry Christmas","క్రిస్మస్ శుభాకాంక్షలు","क्रिसमस की हार्दिक शुभकामनाएँ"],
+"New Year":["🎉","Happy New Year","నూతన సంవత్సర శుభాకాంక్షలు","नववर्ष की हार्दिक शुभकामनाएँ"],
+"Birthday":["🎂","Happy Birthday","పుట్టినరోజు శుభాకాంక్షలు","जन्मदिन की हार्दिक शुभकामनाएँ"]
+};
+const B={
+en:["May your life be filled with joy, health and prosperity. ✨","Wishing you and your family peace, love and happiness. 🌸","May all your dreams come true. 🌟","Sending you warm wishes and lots of love. ❤️"],
+te:["మీ జీవితం ఆనందం, ఆరోగ్యం, ఐశ్వర్యంతో నిండి ఉండాలని కోరుకుంటున్నాను. ✨","మీకు, మీ కుటుంబానికి శాంతి, ప్రేమ, సంతోషం కలగాలని ఆశిస్తున్నాను. 🌸","మీ కలలన్నీ నెరవేరాలని కోరుకుంటున్నాను. 🌟","మీకు ప్రేమపూర్వక శుభాకాంక్షలు. ❤️"],
+hi:["आपका जीवन खुशियों, स्वास्थ्य और समृद्धि से भरा रहे। ✨","आपको और आपके परिवार को शांति, प्रेम और खुशियाँ मिलें। 🌸","आपके सभी सपने पूरे हों। 🌟","आपको ढेर सारा प्यार और शुभकामनाएँ। ❤️"]
+};
+const LI={en:1,te:2,hi:3};
+const S={
+"Dasara": [
+"Ya Devi Sarvabhuteshu Shaktirupena Samsthita. Namastasyai Namastasyai Namastasyai Namo Namah.",
+"యా దేవీ సర్వభూతేషు శక్తిరూపేణ సంస్థితా । నమస్తస్యై నమస్తస్యై నమస్తస్యై నమో నమః ॥",
+"या देवी सर्वभूतेषु शक्तिरूपेण संस्थिता। नमस्तस्यै नमस्तस्यै नमस्तस्यै नमो नमः॥"
+],
+"Deepavali": [
+"Asato Ma Sadgamaya. Tamaso Ma Jyotirgamaya. Mrityor Ma Amritam Gamaya.",
+"అసతో మా సద్గమయ । తమసో మా జ్యోతిర్గమయ । మృత్యోర్మా అమృతం గమయ ॥",
+"असतो मा सद्गमय। तमसो मा ज्योतिर्गमय। मृत्योर्मा अमृतं गमय॥"
+],
+"Ugadi": [
+"Shubham Karoti Kalyanam Arogyam Dhanasampadah. Shatrubuddhi Vinashaya Deepajyotir Namostu Te.",
+"శుభం కరోతి కల్యాణమారోగ్యం ధనసంపదః । శత్రుబుద్ధివినాశాయ దీపజ్యోతిర్నమోఽస్తు తే ॥",
+"शुभं करोति कल्याणमारोग्यं धनसम्पदः। शत्रुबुद्धिविनाशाय दीपज्योतिर्नमोऽस्तु ते॥"
+],
+"Sankranti": [
+"Om Bhur Bhuvah Svah. Tat Savitur Varenyam Bhargo Devasya Dhimahi. Dhiyo Yo Nah Prachodayat.",
+"ఓం భూర్భువః స్వః । తత్సవితుర్వరేణ్యం భర్గో దేవస్య ధీమహి । ధియో యో నః ప్రచోదయాత్ ॥",
+"ॐ भूर्भुवः स्वः। तत्सवितुर्वरेण्यं भर्गो देवस्य धीमहि। धियो यो नः प्रचोदयात्॥"
+],
+"Vinayaka Chavithi": [
+"Vakratunda Mahakaya Suryakoti Samaprabha. Nirvighnam Kuru Me Deva Sarvakaryeshu Sarvada.",
+"వక్రతుండ మహాకాయ సూర్యకోటి సమప్రభ । నిర్విఘ్నం కురు మే దేవ సర్వకార్యేషు సర్వదా ॥",
+"वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ। निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥"
+],
+"Bathukamma": [
+"Sarva Mangala Mangalye Shive Sarvartha Sadhike. Sharanye Tryambake Gauri Narayani Namostu Te.",
+"సర్వమంగళమాంగళ్యే శివే సర్వార్థసాధికే । శరణ్యే త్ర్యంబకే గౌరి నారాయణి నమోఽస్తు తే ॥",
+"सर्वमङ्गलमाङ्गल्ये शिवे सर्वार्थसाधिके। शरण्ये त्र्यम्बके गौरि नारायणि नमोऽस्तु ते॥"
+],
+"Bonalu": [
+"Sarvasvarupe Sarveshe Sarvashakti Samanvite. Bhayebhyastrahi No Devi Durge Devi Namostu Te.",
+"సర్వస్వరూపే సర్వేశే సర్వశక్తిసమన్వితే । భయేభ్యస్త్రాహి నో దేవి దుర్గే దేవి నమోఽస్తు తే ॥",
+"सर्वस्वरूपे सर्वेशे सर्वशक्तिसमन्विते। भयेभ्यस्त्राहि नो देवि दुर्गे देवि नमोऽस्तु ते॥"
+],
+"Sri Rama Navami": [
+"Sri Rama Rama Rameti Rame Rame Manorame. Sahasranama Tattulyam Rama Nama Varanane.",
+"శ్రీరామ రామ రామేతి రమే రామే మనోరమే । సహస్రనామ తత్తుల్యం రామనామ వరాననే ॥",
+"श्रीराम राम रामेति रमे रामे मनोरमे। सहस्रनाम तत्तुल्यं रामनाम वरानने॥"
+],
+"Maha Shivaratri": [
+"Om Tryambakam Yajamahe Sugandhim Pushtivardhanam. Urvarukamiva Bandhanan Mrityor Mukshiya Mamritat.",
+"ఓం త్ర్యంబకం యజామహే సుగంధిం పుష్టివర్ధనమ్ । ఉర్వారుకమివ బంధనాన్మృత్యోర్ముక్షీయ మామృతాత్ ॥",
+"ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम्। उर्वारुकमिव बन्धनान्मृत्योर्मुक्षीय मामृतात्॥"
+],
+"Varalakshmi Vratham": [
+"Om Mahalakshmyai Cha Vidmahe Vishnupatnyai Cha Dhimahi. Tanno Lakshmih Prachodayat.",
+"ఓం మహాలక్ష్మ్యై చ విద్మహే విష్ణుపత్న్యై చ ధీమహి । తన్నో లక్ష్మీః ప్రచోదయాత్ ॥",
+"ॐ महालक्ष्म्यै च विद्महे विष्णुपत्न्यै च धीमहि। तन्नो लक्ष्मीः प्रचोदयात्॥"
+],
+"Eid": [
+"Taqabbalallahu minna wa minkum",
+"తఖబ్బలల్లాహు మిన్నా వ మిన్కుమ్",
+"तक़ब्बलल्लाहु मिन्ना व मिन्कुम"
+],
+"Christmas": [
+"“Glory to God in the highest, and on earth peace, goodwill toward men.” (Luke 2:14)",
+"“సర్వోన్నత స్థలములలో దేవునికి మహిమ, భూమిపై సమాధానము కలుగును గాక.” (లూకా 2:14)",
+"“आकाश में परमेश्वर की महिमा हो, और धरती पर शांति हो।” (लूका 2:14)"
+],
+"New Year": [
+"Sarve Bhavantu Sukhinah Sarve Santu Niramayah. Sarve Bhadrani Pashyantu Ma Kashchid Duhkhabhag Bhavet.",
+"సర్వే భవంతు సుఖినః సర్వే సంతు నిరామయాః । సర్వే భద్రాణి పశ్యంతు మా కశ్చిద్దుఃఖభాగ్భవేత్ ॥",
+"सर्वे भवन्तु सुखिनः सर्वे सन्तु निरामयाः। सर्वे भद्राणि पश्यन्तु मा कश्चिद्दुःखभाग्भवेत्॥"
+],
+"Birthday": [
+"Pashyema Sharadah Shatam. Jivema Sharadah Shatam. Shrinuyama Sharadah Shatam.",
+"పశ్యేమ శరదః శతం । జీవేమ శరదః శతం । శృణుయామ శరదః శతం ॥",
+"पश्येम शरदः शतम्। जीवेम शरदः शतम्। शृणुयाम शरदः शतम्॥"
+]
+};
+const G=[["#ff6f00","#d81b60"],["#1e88e5","#8e24aa"],["#00897b","#43a047"],["#e53935","#fb8c00"]];
+const $=id=>document.getElementById(id);
+let grad=G[0];
+Object.keys(F).forEach(f=>$("fest").add(new Option(f)));
+const say=t=>{$("msg").textContent=t};
+const text=()=>$("card").textContent;
+
+function gen(){
+  const L=$("lang").value,k=$("fest").value,f=F[k],b=B[L];
+  $("card").textContent=f[0]+" "+f[LI[L]]+"!\n\n"+b[Math.floor(Math.random()*b.length)]+"\n\n"+S[k][LI[L]-1];
+  grad=G[Math.floor(Math.random()*G.length)];
+  $("card").style.background="linear-gradient(135deg,"+grad[0]+","+grad[1]+")";
+  say("");
+}
+
+function makeImage(){
+  return new Promise(res=>{
+    const s=1080,c=document.createElement("canvas");c.width=c.height=s;
+    const x=c.getContext("2d"),g=x.createLinearGradient(0,0,s,s);
+    g.addColorStop(0,grad[0]);g.addColorStop(1,grad[1]);x.fillStyle=g;x.fillRect(0,0,s,s);
+    x.fillStyle="#fff";x.font="bold 50px system-ui,'Noto Sans Telugu','Noto Sans Devanagari',sans-serif";x.textAlign="center";x.textBaseline="middle";
+    const lines=[];
+    text().split("\n").forEach(p=>{if(!p){lines.push("");return}let l="";
+      p.split(" ").forEach(w=>{const t=l?l+" "+w:w;if(x.measureText(t).width>s-200&&l){lines.push(l);l=w}else l=t});
+      lines.push(l)});
+    const lh=74,y0=s/2-(lines.length-1)*lh/2;
+    lines.forEach((t,i)=>x.fillText(t,s/2,y0+i*lh));
+    c.toBlob(b=>res(b),"image/png");
+  });
+}
+
+async function shareNative(){
+  try{await navigator.share({text:text()});}catch(e){if(e.name!=="AbortError")copy()}
+}
+async function copy(){
+  try{await navigator.clipboard.writeText(text());say("Copied to clipboard ✔")}
+  catch(e){const r=document.createRange();r.selectNodeContents($("card"));const s=getSelection();s.removeAllRanges();s.addRange(r);say("Text selected, press Copy on your phone")}
+}
+
+$("gen").onclick=gen;["fest","lang"].forEach(i=>$(i).onchange=gen);
+$("copy").onclick=copy;
+$("share").onclick=shareNative;
+$("wa").onclick=()=>{location.href="https://wa.me/?text="+encodeURIComponent(text())};
+$("ig").onclick=async()=>{
+  try{
+    const b=await makeImage(),f=new File([b],"wish.png",{type:"image/png"});
+    if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f]});return}
+  }catch(e){if(e.name==="AbortError")return}
+  await copy();say("Image sharing isn’t supported here. Text copied, paste it in Instagram.");
+};
+gen();
+</script>
+</body>
+</html>
