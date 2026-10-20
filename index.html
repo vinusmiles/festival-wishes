@@ -7,6 +7,15 @@
 <meta name="theme-color" content="#d81b60">
 <meta name="description" content="Create festival wishes with shlokas in Telugu, English and Hindi and share them on WhatsApp and Instagram.">
 <script data-goatcounter="https://vinusmiles.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Telugu:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@1,500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Telugu:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@500&display=swap">
 <style>
 :root{--bg:#fafafa;--fg:#1c1b1f;--surface:#fff;--line:#ddd;--accent:#d81b60;--accent-fg:#fff;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -28,6 +37,13 @@ h2{font-size:.9rem;margin:18px 0 6px;opacity:.8;font-weight:600}
 .card small{position:absolute;top:10px;left:16px;font-size:.75rem;background:rgba(0,0,0,.3);padding:2px 10px;border-radius:99px}
 .txt{white-space:pre-wrap;text-align:center;font-size:1.02rem}
 [hidden]{display:none!important}#imgbox{margin-top:12px;text-align:center}#imgbox img{max-width:100%;border-radius:14px;border:1px solid var(--line)}#imgbox p{font-size:.85rem;margin:8px 0}.btn{display:inline-block;padding:12px 18px;border-radius:10px;background:var(--accent);color:var(--accent-fg);font-weight:600;text-decoration:none}
+.card{font-family:Inter,"Noto Sans Telugu","Noto Sans Devanagari",system-ui,sans-serif}
+.pre,.post,.mean{white-space:pre-wrap;text-align:center}.pre,.post{font-size:1.02rem}.post{margin-top:12px}
+.shloka{margin:16px 0 8px;padding:16px 14px;border:1px solid #d4af37;border-radius:14px;background:rgba(255,236,170,.16);text-align:center;line-height:2;font-size:1.08rem;font-weight:500}
+.shloka.te{font-family:"Noto Serif Telugu",serif}.shloka.hi{font-family:"Noto Serif Devanagari",serif}
+.shloka.en{font-family:"Noto Serif",Georgia,serif;font-style:italic;line-height:1.9}
+.shloka.ar{font-family:"Noto Naskh Arabic",serif;font-size:1.3rem;font-style:normal}
+.mean{font-size:.9rem;font-weight:400;line-height:1.5;margin:6px 4px 4px;opacity:.97}
 #msg{min-height:1.4em;text-align:center;font-size:.9rem;margin-top:10px}
 #msg.ok{color:#2e7d32;font-weight:600}
 @media (prefers-color-scheme:dark){#msg.ok{color:#81c784}}
@@ -90,77 +106,195 @@ hi:{Warm:["आपका जीवन खुशियों, स्वास्�
 Funny:["आपकी मिठाइयाँ कभी खत्म न हों और डाइट छुट्टी पर चली जाए! 😄","मन भरकर खाइए, ज़ोर से हँसिए और आज काम की लिस्ट भूल जाइए! 🤣","आपका फ़ोन शुभकामनाओं से और पेट स्वादिष्ट पकवानों से भर जाए! 😋","आज का प्लान: पहले जश्न, बाद में बाकी सब! 😎"],
 Formal:["इस शुभ अवसर पर हार्दिक शुभकामनाएँ। आपको और आपके परिवार को स्वास्थ्य और समृद्धि प्राप्त हो।","आने वाले दिनों में आपको संतोष, सफलता और सौभाग्य मिले।","यह अवसर आपके और आपके प्रियजनों के लिए शांति और खुशियाँ लाए।","आपको और आपके सम्मानित परिवार को आनंदमय और यादगार उत्सव की शुभकामनाएँ।"]}
 };
-const S={
-"Dasara": [
-"Ya Devi Sarvabhuteshu Shaktirupena Samsthita. Namastasyai Namastasyai Namastasyai Namo Namah.",
-"యా దేవీ సర్వభూతేషు శక్తిరూపేణ సంస్థితా। నమస్తస్యై నమస్తస్యై నమస్తస్యై నమో నమః॥",
-"या देवी सर्वभूतेषु शक्तिरूपेण संस्थिता। नमस्तस्यै नमस्तस्यै नमस्तस्यै नमो नमः॥"
-],
-"Deepavali": [
-"Shubham Karoti Kalyanam Arogyam Dhanasampadah. Shatrubuddhivinashaya Dipajyotirnamostu Te.",
-"శుభం కరోతి కల్యాణమ్ ఆరోగ్యం ధనసమ్పదః। శత్రుబుద్ధివినాశాయ దీపజ్యోతిర్నమోఽస్తు తే॥",
-"शुभं करोति कल्याणम् आरोग्यं धनसम्पदः। शत्रुबुद्धिविनाशाय दीपज्योतिर्नमोऽस्तु ते॥"
-],
-"Ugadi": [
-"Shatayurvajradehaya Sarvasampatkaraya Cha. Sarvarishtavinashaya Nimbakandalabhakshanam.",
-"శతాయుర్వజ్రదేహాయ సర్వసమ్పత్కరాయ చ। సర్వారిష్టవినాశాయ నిమ్బకన్దలభక్షణమ్॥",
-"शतायुर्वज्रदेहाय सर्वसम्पत्कराय च। सर्वारिष्टविनाशाय निम्बकन्दलभक्षणम्॥"
-],
-"Sankranti": [
-"Japakusumasankasham Kashyapeyam Mahadyutim. Tamorim Sarvapapaghnam Pranatosmi Divakaram.",
-"జపాకుసుమసఙ్కాశం కాశ్యపేయం మహాద్యుతిమ్। తమోఽరిం సర్వపాపఘ్నం ప్రణతోఽస్మి దివాకరమ్॥",
-"जपाकुसुमसङ्काशं काश्यपेयं महाद्युतिम्। तमोऽरिं सर्वपापघ्नं प्रणतोऽस्मि दिवाकरम्॥"
-],
-"Vinayaka Chavithi": [
-"Vakratunda Mahakaya Suryakoti Samaprabha. Nirvighnam Kuru Me Deva Sarvakaryeshu Sarvada.",
-"వక్రతుణ్డ మహాకాయ సూర్యకోటి సమప్రభ। నిర్విఘ్నం కురు మే దేవ సర్వకార్యేషు సర్వదా॥",
-"वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ। निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥"
-],
-"Bathukamma": [
-"Sarvamangalamangalye Shive Sarvarthasadhike. Sharanye Tryambake Gauri Narayani Namostu Te.",
-"సర్వమఙ్గలమాఙ్గల్యే శివే సర్వార్థసాధికే। శరణ్యే త్ర్యమ్బకే గౌరి నారాయణి నమోఽస్తు తే॥",
-"सर्वमङ्गलमाङ्गल्ये शिवे सर्वार्थसाधिके। शरण्ये त्र्यम्बके गौरि नारायणि नमोऽस्तु ते॥"
-],
-"Bonalu": [
-"Sarvasvarupe Sarveshe Sarvashaktisamanvite. Bhayebhyastrahi No Devi Durge Devi Namostu Te.",
-"సర్వస్వరూపే సర్వేశే సర్వశక్తిసమన్వితే। భయేభ్యస్త్రాహి నో దేవి దుర్గే దేవి నమోఽస్తు తే॥",
-"सर्वस्वरूपे सर्वेशे सर्वशक्तिसमन्विते। भयेभ्यस्त्राहि नो देवि दुर्गे देवि नमोऽस्तु ते॥"
-],
-"Sri Rama Navami": [
-"Shrirama Rama Rameti Rame Rame Manorame. Sahasranama Tattulyam Ramanama Varanane.",
-"శ్రీరామ రామ రామేతి రమే రామే మనోరమే। సహస్రనామ తత్తుల్యం రామనామ వరాననే॥",
-"श्रीराम राम रामेति रमे रामे मनोरमे। सहस्रनाम तत्तुल्यं रामनाम वरानने॥"
-],
-"Maha Shivaratri": [
-"Om Tryambakam Yajamahe Sugandhim Pushtivardhanam. Urvarukamiva Bandhananmrityormukshiya Mamritat.",
-"ఓం త్ర్యమ్బకం యజామహే సుగన్ధిం పుష్టివర్ధనమ్। ఉర్వారుకమివ బన్ధనాన్మృత్యోర్ముక్షీయ మామృతాత్॥",
-"ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम्। उर्वारुकमिव बन्धनान्मृत्योर्मुक्षीय मामृतात्॥"
-],
-"Varalakshmi Vratham": [
-"Om Mahalakshmyai Cha Vidmahe Vishnupatnyai Cha Dhimahi. Tanno Lakshmih Prachodayat.",
-"ఓం మహాలక్ష్మ్యై చ విద్మహే విష్ణుపత్న్యై చ ధీమహి। తన్నో లక్ష్మీః ప్రచోదయాత్॥",
-"ॐ महालक्ष्म्यै च विद्महे विष्णुपत्न्यै च धीमहि। तन्नो लक्ष्मीः प्रचोदयात्॥"
-],
-"New Year": [
-"Sarve Bhavantu Sukhinah Sarve Santu Niramayah. Sarve Bhadrani Pashyantu Ma Kashchidduhkhabhagbhavet.",
-"సర్వే భవన్తు సుఖినః సర్వే సన్తు నిరామయాః। సర్వే భద్రాణి పశ్యన్తు మా కశ్చిద్దుఃఖభాగ్భవేత్॥",
-"सर्वे भवन्तु सुखिनः सर्वे सन्तु निरामयाः। सर्वे भद्राणि पश्यन्तु मा कश्चिद्दुःखभाग्भवेत्॥"
-],
-"Birthday": [
-"Pashyema Sharadah Shatam. Jivema Sharadah Shatam. Shrinuyama Sharadah Shatam.",
-"పశ్యేమ శరదః శతమ్। జీవేమ శరదః శతమ్। శృణుయామ శరదః శతమ్॥",
-"पश्येम शरदः शतम्। जीवेम शरदः शतम्। शृणुयाम शरदः शतम्॥"
-],
-"Eid": [
-"Taqabbalallahu minna wa minkum",
-"తఖబ్బలల్లాహు మిన్నా వ మిన్కుమ్",
-"तक़ब्बलल्लाहु मिन्ना व मिन्कुम"
-],
-"Christmas": [
-"“Glory to God in the highest, and on earth peace, goodwill toward men.” (Luke 2:14)",
-"“సర్వోన్నత స్థలములలో దేవునికి మహిమ, భూమిపై సమాధానము కలుగును గాక.” (లూకా 2:14)",
-"“आकाश में परमेश्वर की महिमा हो, और धरती पर शांति हो।” (लूका 2:14)"
-]
+const SH={
+"Dasara": {
+"en": {
+"t": "Ya Devi Sarvabhuteshu Shaktirupena Samsthita. Namastasyai Namastasyai Namastasyai Namo Namah.",
+"m": "Salutations to the Goddess who lives in every being as Shakti, our inner strength."
+},
+"te": {
+"t": "యా దేవీ సర్వభూతేషు శక్తిరూపేణ సంస్థితా। నమస్తస్యై నమస్తస్యై నమస్తస్యై నమో నమః॥",
+"m": "ప్రతి జీవిలో శక్తి రూపంలో నివసించే దేవికి నమస్కారం."
+},
+"hi": {
+"t": "या देवी सर्वभूतेषु शक्तिरूपेण संस्थिता। नमस्तस्यै नमस्तस्यै नमस्तस्यै नमो नमः॥",
+"m": "सब प्राणियों में शक्ति रूप में रहने वाली देवी को नमस्कार।"
+}
+},
+"Deepavali": {
+"en": {
+"t": "Shubham Karoti Kalyanamarogyam Dhanasampada. Shatrubuddhivinashaya Dipajyotirnamostute.",
+"m": "Salutations to the light of the lamp, which brings goodness, health and wealth and removes ill thoughts."
+},
+"te": {
+"t": "శుభం కరోతి కల్యాణమారోగ్యం ధనసంపదా। శత్రుబుద్ధివినాశాయ దీపజ్యోతిర్నమోఽస్తుతే॥",
+"m": "శుభం, ఆరోగ్యం, సంపదలను ఇచ్చి చెడు ఆలోచనలను తొలగించే దీపజ్యోతికి నమస్కారం."
+},
+"hi": {
+"t": "शुभं करोति कल्याणमारोग्यं धनसंपदा। शत्रुबुद्धिविनाशाय दीपज्योतिर्नमोऽस्तुते॥",
+"m": "शुभता, स्वास्थ्य और धन देने वाली तथा बुरे विचार मिटाने वाली दीपज्योति को नमस्कार।"
+}
+},
+"Ugadi": {
+"en": {
+"t": "Shatayurvajradehaya Sarvasampatkaraya Cha. Sarvarishtavinashaya Nimbakandalabhakshanam.",
+"m": "For a long life, a strong body and all prosperity, free from every misfortune, we taste the neem."
+},
+"te": {
+"t": "శతాయుర్వజ్రదేహాయ సర్వసంపత్కరాయ చ। సర్వారిష్టవినాశాయ నిమ్బకన్దలభక్షణమ్॥",
+"m": "నూరేళ్ల ఆయుష్షు, దృఢమైన శరీరం, సంపదలు కలగాలని, అన్ని కష్టాలు తొలగాలని వేప చిగురును స్వీకరిస్తాం."
+},
+"hi": {
+"t": "शतायुर्वज्रदेहाय सर्वसंपत्कराय च। सर्वारिष्टविनाशाय निम्बकन्दलभक्षणम्॥",
+"m": "लंबी आयु, मज़बूत शरीर, समृद्धि और सभी अनिष्टों के नाश के लिए हम नीम का सेवन करते हैं।"
+}
+},
+"Sankranti": {
+"en": {
+"t": "Japakusumasamkasham Kashyapeyam Mahadyutim. Tamorim Sarvapapaghnam Pranatosmi Divakaram.",
+"m": "I bow to the Sun, bright as the hibiscus flower, who removes darkness and all sin."
+},
+"te": {
+"t": "జపాకుసుమసంకాశం కాశ్యపేయం మహాద్యుతిమ్। తమోఽరిం సర్వపాపఘ్నం ప్రణతోఽస్మి దివాకరమ్॥",
+"m": "మందార పుష్పంలా ప్రకాశించే, చీకటిని, పాపాలను తొలగించే సూర్యభగవానునికి నమస్కారం."
+},
+"hi": {
+"t": "जपाकुसुमसंकाशं काश्यपेयं महाद्युतिम्। तमोऽरिं सर्वपापघ्नं प्रणतोऽस्मि दिवाकरम्॥",
+"m": "गुड़हल के फूल जैसे तेजस्वी, अंधकार और पापों को हरने वाले सूर्यदेव को नमस्कार।"
+}
+},
+"Vinayaka Chavithi": {
+"en": {
+"t": "Vakratunda Mahakaya Suryakoti Samaprabha. Nirvighnam Kuru Me Deva Sarvakaryeshu Sarvada.",
+"m": "O Ganesha, bright as a million suns, please remove all obstacles from my work."
+},
+"te": {
+"t": "వక్రతుణ్డ మహాకాయ సూర్యకోటి సమప్రభ। నిర్విఘ్నం కురు మే దేవ సర్వకార్యేషు సర్వదా॥",
+"m": "కోటి సూర్యుల తేజస్సు గల వినాయకా, నా అన్ని పనుల్లో విఘ్నాలు తొలగించు."
+},
+"hi": {
+"t": "वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ। निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥",
+"m": "करोड़ों सूर्य के समान तेजस्वी गणेश जी, मेरे सभी कार्य बिना बाधा पूरे करें।"
+}
+},
+"Bathukamma": {
+"en": {
+"t": "Sarvamangalamangalye Shive Sarvarthasadhike. Sharanye Tryambake Gauri Narayani Namostu Te.",
+"m": "Salutations to Gauri, who brings all that is auspicious and gives refuge."
+},
+"te": {
+"t": "సర్వమఙ్గలమాఙ్గల్యే శివే సర్వార్థసాధికే। శరణ్యే త్ర్యమ్బకే గౌరి నారాయణి నమోఽస్తు తే॥",
+"m": "సర్వ శుభాలను ప్రసాదించే, శరణు ఇచ్చే గౌరీదేవికి నమస్కారం."
+},
+"hi": {
+"t": "सर्वमङ्गलमाङ्गल्ये शिवे सर्वार्थसाधिके। शरण्ये त्र्यम्बके गौरि नारायणि नमोऽस्तु ते॥",
+"m": "सब मंगल देने वाली, शरण देने वाली गौरी देवी को नमस्कार।"
+}
+},
+"Bonalu": {
+"en": {
+"t": "Sarvasvarupe Sarveshe Sarvashaktisamanvite. Bhayebhyastrahi No Devi Durge Devi Namostu Te.",
+"m": "O Goddess, protect us from every fear; we bow to you."
+},
+"te": {
+"t": "సర్వస్వరూపే సర్వేశే సర్వశక్తిసమన్వితే। భయేభ్యస్త్రాహి నో దేవి దుర్గే దేవి నమోఽస్తు తే॥",
+"m": "అమ్మా, మమ్మల్ని అన్ని భయాల నుండి కాపాడు; నీకు నమస్కారం."
+},
+"hi": {
+"t": "सर्वस्वरूपे सर्वेशे सर्वशक्तिसमन्विते। भयेभ्यस्त्राहि नो देवि दुर्गे देवि नमोऽस्तु ते॥",
+"m": "हे देवी, हमें सब भयों से बचाओ; आपको नमस्कार।"
+}
+},
+"Sri Rama Navami": {
+"en": {
+"t": "Shrirama Rama Rameti Rame Rame Manorame. Sahasranama Tattulyam Ramanama Varanane.",
+"m": "The name of Rama equals the thousand names of Vishnu."
+},
+"te": {
+"t": "శ్రీరామ రామ రామేతి రమే రామే మనోరమే। సహస్రనామ తత్తుల్యం రామనామ వరాననే॥",
+"m": "రామ నామం విష్ణు సహస్రనామాలకు సమానం."
+},
+"hi": {
+"t": "श्रीराम राम रामेति रमे रामे मनोरमे। सहस्रनाम तत्तुल्यं रामनाम वरानने॥",
+"m": "राम का नाम विष्णु के हज़ार नामों के बराबर है।"
+}
+},
+"Maha Shivaratri": {
+"en": {
+"t": "Om Tryambakam Yajamahe Sugandhim Pushtivardhanam. Urvarukamiva Bandhananmrityormukshiya Mamritat.",
+"m": "We worship Shiva; may he free us from the fear of death and grant us life."
+},
+"te": {
+"t": "ఓం త్ర్యమ్బకం యజామహే సుగన్ధిం పుష్టివర్ధనమ్। ఉర్వారుకమివ బన్ధనాన్మృత్యోర్ముక్షీయ మామృతాత్॥",
+"m": "శివుని ఆరాధిస్తున్నాం; మృత్యు భయం నుండి విడిపించి అమృతత్వాన్ని ప్రసాదించుగాక."
+},
+"hi": {
+"t": "ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम्। उर्वारुकमिव बन्धनान्मृत्योर्मुक्षीय मामृतात्॥",
+"m": "हम शिव की आराधना करते हैं; वे हमें मृत्यु के भय से मुक्त कर अमृत प्रदान करें।"
+}
+},
+"Varalakshmi Vratham": {
+"en": {
+"t": "Om Mahalakshmyai Cha Vidmahe Vishnupatnyai Cha Dhimahi. Tanno Lakshmih Prachodayat.",
+"m": "We meditate on Goddess Lakshmi; may she inspire and guide our minds."
+},
+"te": {
+"t": "ఓం మహాలక్ష్మ్యై చ విద్మహే విష్ణుపత్న్యై చ ధీమహి। తన్నో లక్ష్మీః ప్రచోదయాత్॥",
+"m": "లక్ష్మీదేవిని ధ్యానిస్తున్నాం; ఆమె మా బుద్ధిని ప్రేరేపించి మార్గం చూపుగాక."
+},
+"hi": {
+"t": "ॐ महालक्ष्म्यै च विद्महे विष्णुपत्न्यै च धीमहि। तन्नो लक्ष्मीः प्रचोदयात्॥",
+"m": "हम लक्ष्मी देवी का ध्यान करते हैं; वे हमारी बुद्धि को प्रेरणा दें।"
+}
+},
+"New Year": {
+"en": {
+"t": "Sarve Bhavantu Sukhinah Sarve Santu Niramayah. Sarve Bhadrani Pashyantu Ma Kashchidduhkhabhagbhavet.",
+"m": "May everyone be happy and healthy, see what is good, and be free from sorrow."
+},
+"te": {
+"t": "సర్వే భవన్తు సుఖినః సర్వే సన్తు నిరామయాః। సర్వే భద్రాణి పశ్యన్తు మా కశ్చిద్దుఃఖభాగ్భవేత్॥",
+"m": "అందరూ సుఖంగా, ఆరోగ్యంగా ఉండాలి; అందరికీ మంచి జరగాలి; ఎవరికీ దుఃఖం కలగకూడదు."
+},
+"hi": {
+"t": "सर्वे भवन्तु सुखिनः सर्वे सन्तु निरामयाः। सर्वे भद्राणि पश्यन्तु मा कश्चिद्दुःखभाग्भवेत्॥",
+"m": "सब सुखी हों, सब स्वस्थ हों, सब शुभ देखें, कोई दुखी न हो।"
+}
+},
+"Birthday": {
+"en": {
+"t": "Pashyema Sharadah Shatam. Jivema Sharadah Shatam.",
+"m": "May we see and live for a hundred years."
+},
+"te": {
+"t": "పశ్యేమ శరదః శతమ్। జీవేమ శరదః శతమ్॥",
+"m": "నూరేళ్లు చూడాలని, నూరేళ్లు జీవించాలని ఆశీర్వాదం."
+},
+"hi": {
+"t": "पश्येम शरदः शतम्। जीवेम शरदः शतम्॥",
+"m": "सौ वर्षों तक देखें और जिएँ, यही शुभकामना।"
+}
+},
+"Eid": {
+"en": {
+"t": "تَقَبَّلَ اللهُ مِنَّا وَمِنكُم",
+"m": "May Allah accept the good deeds of us and of you."
+},
+"te": {
+"t": "تَقَبَّلَ اللهُ مِنَّا وَمِنكُم",
+"m": "అల్లాహ్ మన అందరి మంచి పనులను స్వీకరించుగాక."
+},
+"hi": {
+"t": "تَقَبَّلَ اللهُ مِنَّا وَمِنكُم",
+"m": "अल्लाह हम सबके नेक कामों को कबूल करे।"
+}
+},
+"Christmas": {
+"en": {
+"t": "“Glory to God in the highest, and on earth peace, good will toward men.” (Luke 2:14)",
+"m": "Glory to God above, and peace on earth."
+}
+}
 };
 const G=[["#ff6f00","#d81b60"],["#1e88e5","#8e24aa"],["#00897b","#43a047"],["#e53935","#fb8c00"]];
 const LEN={short:1,medium:2,long:3};
@@ -170,12 +304,12 @@ function build(k,L,len,order,to,from){
   const sets=st=>[0,1,2].map(v=>Array.from({length:n},(_,i)=>(v*st+i)%P));
   const uniq=a=>new Set(a.map(x=>x.slice().sort().join())).size===3;
   let ix=sets(n);if(!uniq(ix))ix=sets(1);
-  return ix.map(idx=>{
-    let t=(to?D[L]+" "+to+",\n\n":"")+F[k][0]+" "+F[k][LI[L]]+"!\n\n"+idx.map(i=>order[i]).join(" ")+"\n\n"+S[k][LI[L]-1];
-    if(len==="long")t+="\n\n"+C[L];
-    if(from)t+="\n\n— "+from;
-    return t;
-  });
+  const sh=SH[k]&&SH[k][L];
+  return ix.map(idx=>({
+    pre:(to?D[L]+" "+to+",\n\n":"")+F[k][0]+" "+F[k][LI[L]]+"!\n\n"+idx.map(i=>order[i]).join(" "),
+    shloka:sh?sh.t:"",meaning:sh?sh.m:"",
+    post:[len==="long"?C[L]:"",from?"— "+from:""].filter(Boolean).join("\n\n"),
+    L,k}));
 }
 //UI
 const $=id=>document.getElementById(id);
@@ -185,15 +319,19 @@ let texts=[],grads=[],order=[],sel=0,tm;
 Object.keys(F).forEach(f=>$("fest").add(new Option(f)));
 function say(t,ok){const m=$("msg");m.textContent=t;m.className=ok?"ok":"";clearTimeout(tm);if(t)tm=setTimeout(()=>{m.textContent=""},4500)}
 function flash(b,label){if(!b.dataset.l)b.dataset.l=b.textContent;b.textContent=label;clearTimeout(b._t);b._t=setTimeout(()=>{b.textContent=b.dataset.l},1600)}
-const cur=()=>texts[sel];
+const toText=w=>[w.pre,w.shloka?w.shloka+"\n("+w.meaning+")":"",w.post].filter(Boolean).join("\n\n");
+const cur=()=>toText(texts[sel]);
 function render(){
   const box=$("cards");box.textContent="";$("imgbox").hidden=true;
-  texts.forEach((t,i)=>{
-    const d=document.createElement("div"),h=document.createElement("small"),p=document.createElement("div");
+  texts.forEach((w,i)=>{
+    const d=document.createElement("div"),h=document.createElement("small");
     d.className="card"+(i===sel?" sel":"");d.tabIndex=0;d.setAttribute("role","radio");d.setAttribute("aria-checked",i===sel?"true":"false");
     d.style.background="linear-gradient(135deg,"+grads[i][0]+","+grads[i][1]+")";
-    h.textContent=(i===sel?"✓ Selected · ":"")+"Option "+(i+1);p.className="txt";p.textContent=t;
-    d.append(h,p);
+    h.textContent=(i===sel?"✓ Selected · ":"")+"Option "+(i+1);d.append(h);
+    const add=(cls,t,lang)=>{if(!t)return null;const e=document.createElement("div");e.className=cls;e.textContent=t;if(lang)e.lang=lang;d.append(e);return e};
+    add("pre",w.pre);
+    if(w.shloka){const ar=w.k==="Eid",e=add("shloka "+(ar?"ar":w.L),w.shloka,ar?"ar":w.L);if(ar)e.dir="rtl";add("mean",w.meaning,w.L)}
+    add("post",w.post);
     const pick=()=>{sel=i;render()};
     d.onclick=pick;d.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();pick()}};
     box.appendChild(d);
@@ -222,24 +360,50 @@ function wrap(x,t,w){
     lines.push(l)});
   return lines;
 }
-function makeImage(t,g){
-  return new Promise(res=>{
-    const s=1080,c=document.createElement("canvas");c.width=c.height=s;
-    const x=c.getContext("2d"),gr=x.createLinearGradient(0,0,s,s);
-    gr.addColorStop(0,g[0]);gr.addColorStop(1,g[1]);x.fillStyle=gr;x.fillRect(0,0,s,s);
-    x.fillStyle="#fff";x.textAlign="center";x.textBaseline="middle";
-    let size=56,lines,lh;
-    for(;size>=24;size-=2){x.font="bold "+size+"px "+FONT;lh=size*1.4;lines=wrap(x,t,s-160);if(lines.length*lh<=s-160)break}
-    const y0=s/2-(lines.length-1)*lh/2;
-    lines.forEach((l,i)=>x.fillText(l,s/2,y0+i*lh));
-    c.toBlob(b=>res(b),"image/png");
+function rr(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()}
+async function loadFonts(w){
+  try{
+    const fam=w.k==="Eid"?'"Noto Naskh Arabic"':w.L==="te"?'"Noto Serif Telugu"':w.L==="hi"?'"Noto Serif Devanagari"':'"Noto Serif"';
+    const sans=w.L==="te"?'"Noto Sans Telugu"':w.L==="hi"?'"Noto Sans Devanagari"':"Inter";
+    await Promise.race([Promise.all([document.fonts.load("500 40px "+fam,w.shloka||"a"),document.fonts.load("600 40px "+sans,w.pre),document.fonts.load("400 40px "+sans,w.meaning||"a")]),new Promise(r=>setTimeout(r,2000))]);
+  }catch(e){}
+}
+async function makeImage(w,g){
+  await loadFonts(w);
+  const s=1080,c=document.createElement("canvas");c.width=c.height=s;
+  const x=c.getContext("2d"),gr=x.createLinearGradient(0,0,s,s);
+  gr.addColorStop(0,g[0]);gr.addColorStop(1,g[1]);x.fillStyle=gr;x.fillRect(0,0,s,s);
+  const SANS="Inter,'Noto Sans Telugu','Noto Sans Devanagari',system-ui,sans-serif";
+  const ar=w.k==="Eid";
+  const SER=ar?"'Noto Naskh Arabic',serif":w.L==="te"?"'Noto Serif Telugu',serif":w.L==="hi"?"'Noto Serif Devanagari',serif":"'Noto Serif',Georgia,serif";
+  const M=96,W=s-2*M,BP=30;
+  const plan=sz=>{
+    const secs=[];let h=0;
+    const add=(kind,t,font,lh,wid)=>{x.font=font;const lines=wrap(x,t,wid);secs.push({kind,lines,font,lh});h+=lines.length*lh+(kind==="shloka"?2*BP:0)+sz*0.7};
+    add("pre",w.pre,"600 "+sz+"px "+SANS,sz*1.45,W);
+    if(w.shloka){add("shloka",w.shloka,(w.L==="en"&&!ar?"italic ":"")+"500 "+sz*1.05+"px "+SER,sz*1.9,W-2*BP);add("mean",w.meaning,"400 "+sz*0.8+"px "+SANS,sz*1.35,W)}
+    if(w.post)add("post",w.post,"600 "+sz*0.9+"px "+SANS,sz*1.4,W);
+    return {secs,h:h-sz*0.7};
+  };
+  let size=52,P;
+  for(;size>=22;size-=2){P=plan(size);if(P.h<=s-2*M)break}
+  let y=(s-P.h)/2;
+  x.textAlign="center";x.textBaseline="middle";
+  P.secs.forEach(sec=>{
+    x.font=sec.font;
+    const bh=sec.lines.length*sec.lh;
+    if(sec.kind==="shloka"){rr(x,M,y,W,bh+2*BP,28);x.fillStyle="rgba(255,236,170,0.18)";x.fill();x.lineWidth=3;x.strokeStyle="#d4af37";x.stroke();y+=BP}
+    x.fillStyle="#fff";
+    sec.lines.forEach((l,i)=>x.fillText(l,s/2,y+i*sec.lh+sec.lh/2));
+    y+=bh+(sec.kind==="shloka"?BP:0)+size*0.7;
   });
+  return new Promise(res=>c.toBlob(b=>res(b),"image/png"));
 }
 const CAN_DL=true;
 let imgUrl="";
 const toDataUrl=b=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(b)});
 async function showImage(b){
-  b=b||await makeImage(cur(),grads[sel]);
+  b=b||await makeImage(texts[sel],grads[sel]);
   if(imgUrl)URL.revokeObjectURL(imgUrl);
   imgUrl=URL.createObjectURL(b);
   $("prev").src=await toDataUrl(b);
@@ -266,7 +430,7 @@ $("ig").onclick=async()=>{
   track("share-instagram");
   let b;
   try{
-    b=await makeImage(cur(),grads[sel]);
+    b=await makeImage(texts[sel],grads[sel]);
     const f=new File([b],"festival-wish.png",{type:"image/png"});
     if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f]});flash($("ig"),"Shared ✔");return}
   }catch(e){if(e.name==="AbortError")return}
