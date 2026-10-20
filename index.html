@@ -24,6 +24,7 @@ button.alt{background:var(--surface);color:var(--fg);border:1px solid var(--line
 .row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
 #msg{min-height:1.2em;text-align:center;font-size:.85rem;margin-top:10px;opacity:.8}
 </style>
+<script data-goatcounter="https://vinusmiles.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
 <main>
@@ -140,6 +141,7 @@ const G=[["#ff6f00","#d81b60"],["#1e88e5","#8e24aa"],["#00897b","#43a047"],["#e5
 const $=id=>document.getElementById(id);
 let grad=G[0];
 Object.keys(F).forEach(f=>$("fest").add(new Option(f)));
+const track=n=>{try{window.goatcounter&&window.goatcounter.count&&window.goatcounter.count({path:n,title:n,event:true})}catch(e){}};
 const say=t=>{$("msg").textContent=t};
 const text=()=>$("card").textContent;
 
@@ -178,7 +180,7 @@ async function copy(){
 $("gen").onclick=gen;["fest","lang"].forEach(i=>$(i).onchange=gen);
 $("copy").onclick=copy;
 $("share").onclick=shareNative;
-$("wa").onclick=()=>{location.href="https://wa.me/?text="+encodeURIComponent(text())};
+$("wa").onclick=()=>{track("share-whatsapp");const u="https://wa.me/?text="+encodeURIComponent(text());setTimeout(()=>{location.href=u},300)};
 $("ig").onclick=async()=>{
   try{
     const b=await makeImage(),f=new File([b],"wish.png",{type:"image/png"});
@@ -186,6 +188,7 @@ $("ig").onclick=async()=>{
   }catch(e){if(e.name==="AbortError")return}
   await copy();say("Image sharing isn’t supported here. Text copied, paste it in Instagram.");
 };
+[["gen","generate"],["ig","share-instagram"],["share","share-menu"],["copy","copy"]].forEach(([i,n])=>$(i).addEventListener("click",()=>track(n)));
 gen();
 </script>
 </body>
