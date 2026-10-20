@@ -6,6 +6,7 @@
 <title>Festival Wishes</title>
 <meta name="theme-color" content="#d81b60">
 <meta name="description" content="Create festival wishes with shlokas in Telugu, English and Hindi and share them on WhatsApp and Instagram.">
+<script data-goatcounter="https://vinusmiles.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <style>
 :root{--bg:#fafafa;--fg:#1c1b1f;--surface:#fff;--line:#ddd;--accent:#d81b60;--accent-fg:#fff;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -14,35 +15,48 @@ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:en
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 main{max-width:480px;margin:0 auto;padding:16px}
-h1{font-size:1.3rem;margin:4px 0 14px}
+h1{font-size:1.3rem;margin:4px 0 10px}
 label{display:block;font-size:.8rem;margin:10px 0 4px;opacity:.8}
-select,input{width:100%;padding:12px;font-size:1rem;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--fg)}
+select,input{width:100%;min-width:0;padding:11px;font-size:1rem;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--fg)}
 button{font-size:1rem;padding:12px;border:0;border-radius:10px;background:var(--accent);color:var(--accent-fg);font-weight:600;cursor:pointer}
 button.alt{background:var(--surface);color:var(--fg);border:1px solid var(--line)}
+.g2,.g3{display:grid;gap:8px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr 1fr}
 #gen{width:100%;margin-top:14px}
-#card{margin-top:16px;border-radius:20px;min-height:230px;padding:28px;display:flex;align-items:center;justify-content:center;text-align:center;color:#fff;font-size:1.1rem;font-weight:700;line-height:1.5;white-space:pre-wrap}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
-#msg{min-height:1.2em;text-align:center;font-size:.85rem;margin-top:10px;opacity:.8}
+h2{font-size:.9rem;margin:18px 0 6px;opacity:.8;font-weight:600}
+.card{position:relative;margin-top:10px;border-radius:18px;padding:34px 20px 20px;color:#fff;font-weight:600;line-height:1.5;cursor:pointer;border:3px solid transparent;opacity:.78}
+.card.sel{opacity:1;border-color:var(--fg);box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.card small{position:absolute;top:10px;left:16px;font-size:.75rem;background:rgba(0,0,0,.3);padding:2px 10px;border-radius:99px}
+.txt{white-space:pre-wrap;text-align:center;font-size:1.02rem}
+#msg{min-height:1.4em;text-align:center;font-size:.9rem;margin-top:10px}
+#msg.ok{color:#2e7d32;font-weight:600}
+@media (prefers-color-scheme:dark){#msg.ok{color:#81c784}}
 </style>
-<script data-goatcounter="https://vinusmiles.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
 <main>
 <h1>🎉 Festival Wishes</h1>
 <label for="fest">Festival</label><select id="fest"></select>
-<label for="lang">Language</label><select id="lang"><option value="te">తెలుగు (Telugu)</option><option value="en">English</option><option value="hi">हिन्दी (Hindi)</option></select>
-<button id="gen">✨ Generate wish</button>
-<div id="card">Tap Generate</div>
-<div class="row">
+<div class="g3">
+<div><label for="lang">Language</label><select id="lang"><option value="te">తెలుగు</option><option value="en">English</option><option value="hi">हिन्दी</option></select></div>
+<div><label for="tone">Tone</label><select id="tone"><option>Warm</option><option>Funny</option><option>Formal</option></select></div>
+<div><label for="len">Length</label><select id="len"><option value="short">Short</option><option value="medium" selected>Medium</option><option value="long">Long</option></select></div>
+</div>
+<div class="g2">
+<div><label for="to">To (optional)</label><input id="to" maxlength="30" placeholder="Recipient" autocomplete="off"></div>
+<div><label for="from">From (optional)</label><input id="from" maxlength="30" placeholder="Your name" autocomplete="off"></div>
+</div>
+<button id="gen">✨ Create 3 wishes</button>
+<h2>Tap a wish to choose it</h2>
+<div id="cards" role="radiogroup"></div>
+<div class="g2" style="margin-top:12px">
 <button id="wa">WhatsApp</button>
 <button id="ig">Instagram</button>
 <button id="share" class="alt">Share…</button>
 <button id="copy" class="alt">Copy</button>
 </div>
-<div id="msg"></div>
+<div id="msg" aria-live="polite"></div>
 </main>
 <script>
-// festival: [emoji, English, Telugu, Hindi] greetings
 const F={
 "Dasara":["🏹","Happy Dasara","దసరా శుభాకాంక్షలు","दशहरा की हार्दिक शुभकामनाएँ"],
 "Deepavali":["🪔","Happy Deepavali","దీపావళి శుభాకాంక్షలు","दीपावली की हार्दिक शुभकामनाएँ"],
@@ -59,12 +73,20 @@ const F={
 "New Year":["🎉","Happy New Year","నూతన సంవత్సర శుభాకాంక్షలు","नववर्ष की हार्दिक शुभकामनाएँ"],
 "Birthday":["🎂","Happy Birthday","పుట్టినరోజు శుభాకాంక్షలు","जन्मदिन की हार्दिक शुभकामनाएँ"]
 };
-const B={
-en:["May your life be filled with joy, health and prosperity. ✨","Wishing you and your family peace, love and happiness. 🌸","May all your dreams come true. 🌟","Sending you warm wishes and lots of love. ❤️"],
-te:["మీ జీవితం ఆనందం, ఆరోగ్యం, ఐశ్వర్యంతో నిండి ఉండాలని కోరుకుంటున్నాను. ✨","మీకు, మీ కుటుంబానికి శాంతి, ప్రేమ, సంతోషం కలగాలని ఆశిస్తున్నాను. 🌸","మీ కలలన్నీ నెరవేరాలని కోరుకుంటున్నాను. 🌟","మీకు ప్రేమపూర్వక శుభాకాంక్షలు. ❤️"],
-hi:["आपका जीवन खुशियों, स्वास्थ्य और समृद्धि से भरा रहे। ✨","आपको और आपके परिवार को शांति, प्रेम और खुशियाँ मिलें। 🌸","आपके सभी सपने पूरे हों। 🌟","आपको ढेर सारा प्यार और शुभकामनाएँ। ❤️"]
-};
 const LI={en:1,te:2,hi:3};
+const D={en:"Dear",te:"ప్రియమైన",hi:"प्रिय"};
+const C={en:"Celebrate with love and togetherness. 🙏",te:"ప్రేమతో, ఆనందంతో ఈ రోజును జరుపుకోండి. 🙏",hi:"प्रेम और खुशियों के साथ यह दिन मनाएँ। 🙏"};
+const B={
+en:{Warm:["May your life be filled with joy, health and prosperity. ✨","Wishing you and your family peace, love and happiness. 🌸","May all your dreams come true. 🌟","Sending you warm wishes and lots of love. ❤️","May this special day bring new hope and beautiful moments to your life. 🌈"],
+Funny:["May your sweets be unlimited and your diet take a holiday! 😄","Eat well, laugh loudly and forget your to-do list today! 🤣","May your phone be flooded with wishes and your stomach with delicious food! 😋"],
+Formal:["With warm regards on this auspicious occasion. May you and your family be blessed with good health and prosperity.","Wishing you contentment, success and good fortune in the days ahead.","May this occasion bring peace and happiness to you and your loved ones."]},
+te:{Warm:["మీ జీవితం ఆనందం, ఆరోగ్యం, ఐశ్వర్యంతో నిండి ఉండాలని కోరుకుంటున్నాను. ✨","మీకు, మీ కుటుంబానికి శాంతి, ప్రేమ, సంతోషం కలగాలని ఆశిస్తున్నాను. 🌸","మీ కలలన్నీ నెరవేరాలని కోరుకుంటున్నాను. 🌟","మీకు ప్రేమపూర్వక శుభాకాంక్షలు. ❤️","ఈ ప్రత్యేక రోజు మీ జీవితంలో కొత్త ఆశలను, అందమైన క్షణాలను తీసుకురావాలి. 🌈"],
+Funny:["మీ స్వీట్లు తరగకూడదు, డైట్ మాత్రం సెలవు తీసుకోవాలి! 😄","హాయిగా తినండి, గట్టిగా నవ్వండి, ఈ రోజు పనుల లిస్ట్ మర్చిపోండి! 🤣","మీ ఫోన్ శుభాకాంక్షలతో, మీ ప్లేట్ రుచికరమైన వంటకాలతో నిండిపోవాలి! 😋"],
+Formal:["ఈ శుభ సందర్భంగా హృదయపూర్వక శుభాకాంక్షలు. మీకు, మీ కుటుంబానికి ఆరోగ్యం, ఐశ్వర్యం కలగాలని ఆశిస్తున్నాను.","రాబోయే రోజుల్లో మీకు సంతృప్తి, విజయం, అదృష్టం కలగాలని కోరుకుంటున్నాను.","ఈ సందర్భం మీకు, మీ ప్రియమైనవారికి శాంతి, సంతోషం తీసుకురావాలని ఆశిస్తున్నాను."]},
+hi:{Warm:["आपका जीवन खुशियों, स्वास्थ्य और समृद्धि से भरा रहे। ✨","आपको और आपके परिवार को शांति, प्रेम और खुशियाँ मिलें। 🌸","आपके सभी सपने पूरे हों। 🌟","आपको ढेर सारा प्यार और शुभकामनाएँ। ❤️","यह खास दिन आपके जीवन में नई उम्मीदें और सुंदर पल लाए। 🌈"],
+Funny:["आपकी मिठाइयाँ कभी खत्म न हों और डाइट छुट्टी पर चली जाए! 😄","मन भरकर खाइए, ज़ोर से हँसिए और आज काम की लिस्ट भूल जाइए! 🤣","आपका फ़ोन शुभकामनाओं से और पेट स्वादिष्ट पकवानों से भर जाए! 😋"],
+Formal:["इस शुभ अवसर पर हार्दिक शुभकामनाएँ। आपको और आपके परिवार को स्वास्थ्य और समृद्धि प्राप्त हो।","आने वाले दिनों में आपको संतोष, सफलता और सौभाग्य मिले।","यह अवसर आपके और आपके प्रियजनों के लिए शांति और खुशियाँ लाए।"]}
+};
 const S={
 "Dasara": [
 "Ya Devi Sarvabhuteshu Shaktirupena Samsthita. Namastasyai Namastasyai Namastasyai Namo Namah.",
@@ -138,57 +160,95 @@ const S={
 ]
 };
 const G=[["#ff6f00","#d81b60"],["#1e88e5","#8e24aa"],["#00897b","#43a047"],["#e53935","#fb8c00"]];
-const $=id=>document.getElementById(id);
-let grad=G[0];
-Object.keys(F).forEach(f=>$("fest").add(new Option(f)));
-const track=n=>{try{window.goatcounter&&window.goatcounter.count&&window.goatcounter.count({path:n,title:n,event:true})}catch(e){}};
-const say=t=>{$("msg").textContent=t};
-const text=()=>$("card").textContent;
-
-function gen(){
-  const L=$("lang").value,k=$("fest").value,f=F[k],b=B[L];
-  $("card").textContent=f[0]+" "+f[LI[L]]+"!\n\n"+b[Math.floor(Math.random()*b.length)]+"\n\n"+S[k][LI[L]-1];
-  grad=G[Math.floor(Math.random()*G.length)];
-  $("card").style.background="linear-gradient(135deg,"+grad[0]+","+grad[1]+")";
-  say("");
+const LEN={short:1,medium:2,long:3};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+function build(k,L,len,order,to,from){
+  const n=LEN[len],off=v=>order.length<=n?v:v*n,out=[];
+  for(let v=0;v<3;v++){
+    const bl=[];for(let i=0;i<n;i++)bl.push(order[(off(v)+i)%order.length]);
+    let t=(to?D[L]+" "+to+",\n\n":"")+F[k][0]+" "+F[k][LI[L]]+"!\n\n"+bl.join(" ")+"\n\n"+S[k][LI[L]-1];
+    if(len==="long")t+="\n\n"+C[L];
+    if(from)t+="\n\n— "+from;
+    out.push(t);
+  }
+  return out;
 }
-
-function makeImage(){
+//UI
+const $=id=>document.getElementById(id);
+const FONT="system-ui,'Noto Sans Telugu','Noto Sans Devanagari',sans-serif";
+const track=n=>{try{window.goatcounter&&window.goatcounter.count&&window.goatcounter.count({path:n,title:n,event:true})}catch(e){}};
+let texts=[],grads=[],order=[],sel=0,tm;
+Object.keys(F).forEach(f=>$("fest").add(new Option(f)));
+function say(t,ok){const m=$("msg");m.textContent=t;m.className=ok?"ok":"";clearTimeout(tm);if(t)tm=setTimeout(()=>{m.textContent=""},4500)}
+function flash(b,label){if(!b.dataset.l)b.dataset.l=b.textContent;b.textContent=label;clearTimeout(b._t);b._t=setTimeout(()=>{b.textContent=b.dataset.l},1600)}
+const cur=()=>texts[sel];
+function render(){
+  const box=$("cards");box.textContent="";
+  texts.forEach((t,i)=>{
+    const d=document.createElement("div"),h=document.createElement("small"),p=document.createElement("div");
+    d.className="card"+(i===sel?" sel":"");d.tabIndex=0;d.setAttribute("role","radio");d.setAttribute("aria-checked",i===sel?"true":"false");
+    d.style.background="linear-gradient(135deg,"+grads[i][0]+","+grads[i][1]+")";
+    h.textContent=(i===sel?"✓ Selected · ":"")+"Option "+(i+1);p.className="txt";p.textContent=t;
+    d.append(h,p);
+    const pick=()=>{sel=i;render()};
+    d.onclick=pick;d.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();pick()}};
+    box.appendChild(d);
+  });
+}
+function rebuild(){texts=build($("fest").value,$("lang").value,$("len").value,order,$("to").value.trim(),$("from").value.trim());render()}
+function gen(){order=shuffle(B[$("lang").value][$("tone").value]);grads=shuffle(G).slice(0,3);sel=0;rebuild();say("")}
+async function copy(){
+  const t=cur();let ok=false;
+  try{await navigator.clipboard.writeText(t);ok=true}catch(e){
+    const ta=document.createElement("textarea");ta.value=t;ta.style.cssText="position:fixed;opacity:0";document.body.appendChild(ta);ta.select();
+    try{ok=document.execCommand("copy")}catch(_){}ta.remove();
+  }
+  if(ok){flash($("copy"),"Copied ✔");say("Option "+(sel+1)+" copied ✔",1)}else say("Couldn’t copy. Press and hold the wish text to select it.");
+  return ok;
+}
+async function shareNative(){
+  if(!navigator.share){if(await copy())say("Sharing isn’t available here, so the wish was copied instead ✔",1);return}
+  try{await navigator.share({text:cur()});flash($("share"),"Shared ✔")}
+  catch(e){if(e.name!=="AbortError"&&await copy())say("Sharing didn’t open, so the wish was copied ✔",1)}
+}
+function wrap(x,t,w){
+  const lines=[];
+  t.split("\n").forEach(p=>{if(!p){lines.push("");return}let l="";
+    p.split(" ").forEach(word=>{const u=l?l+" "+word:word;if(x.measureText(u).width>w&&l){lines.push(l);l=word}else l=u});
+    lines.push(l)});
+  return lines;
+}
+function makeImage(t,g){
   return new Promise(res=>{
     const s=1080,c=document.createElement("canvas");c.width=c.height=s;
-    const x=c.getContext("2d"),g=x.createLinearGradient(0,0,s,s);
-    g.addColorStop(0,grad[0]);g.addColorStop(1,grad[1]);x.fillStyle=g;x.fillRect(0,0,s,s);
-    x.fillStyle="#fff";x.font="bold 50px system-ui,'Noto Sans Telugu','Noto Sans Devanagari',sans-serif";x.textAlign="center";x.textBaseline="middle";
-    const lines=[];
-    text().split("\n").forEach(p=>{if(!p){lines.push("");return}let l="";
-      p.split(" ").forEach(w=>{const t=l?l+" "+w:w;if(x.measureText(t).width>s-200&&l){lines.push(l);l=w}else l=t});
-      lines.push(l)});
-    const lh=74,y0=s/2-(lines.length-1)*lh/2;
-    lines.forEach((t,i)=>x.fillText(t,s/2,y0+i*lh));
+    const x=c.getContext("2d"),gr=x.createLinearGradient(0,0,s,s);
+    gr.addColorStop(0,g[0]);gr.addColorStop(1,g[1]);x.fillStyle=gr;x.fillRect(0,0,s,s);
+    x.fillStyle="#fff";x.textAlign="center";x.textBaseline="middle";
+    let size=56,lines,lh;
+    for(;size>=24;size-=2){x.font="bold "+size+"px "+FONT;lh=size*1.4;lines=wrap(x,t,s-160);if(lines.length*lh<=s-160)break}
+    const y0=s/2-(lines.length-1)*lh/2;
+    lines.forEach((l,i)=>x.fillText(l,s/2,y0+i*lh));
     c.toBlob(b=>res(b),"image/png");
   });
 }
-
-async function shareNative(){
-  try{await navigator.share({text:text()});}catch(e){if(e.name!=="AbortError")copy()}
-}
-async function copy(){
-  try{await navigator.clipboard.writeText(text());say("Copied to clipboard ✔")}
-  catch(e){const r=document.createRange();r.selectNodeContents($("card"));const s=getSelection();s.removeAllRanges();s.addRange(r);say("Text selected, press Copy on your phone")}
-}
-
-$("gen").onclick=gen;["fest","lang"].forEach(i=>$(i).onchange=gen);
-$("copy").onclick=copy;
-$("share").onclick=shareNative;
-$("wa").onclick=()=>{track("share-whatsapp");const u="https://wa.me/?text="+encodeURIComponent(text());setTimeout(()=>{location.href=u},300)};
-$("ig").onclick=async()=>{
-  try{
-    const b=await makeImage(),f=new File([b],"wish.png",{type:"image/png"});
-    if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f]});return}
-  }catch(e){if(e.name==="AbortError")return}
-  await copy();say("Image sharing isn’t supported here. Text copied, paste it in Instagram.");
+$("wa").onclick=()=>{
+  track("share-whatsapp");say("Opening WhatsApp…",1);
+  const u="https://wa.me/?text="+encodeURIComponent(cur());
+  setTimeout(()=>{location.href=u},300);
 };
-[["gen","generate"],["ig","share-instagram"],["share","share-menu"],["copy","copy"]].forEach(([i,n])=>$(i).addEventListener("click",()=>track(n)));
+$("ig").onclick=async()=>{
+  track("share-instagram");
+  try{
+    const b=await makeImage(cur(),grads[sel]),f=new File([b],"wish.png",{type:"image/png"});
+    if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f]});flash($("ig"),"Shared ✔");return}
+  }catch(e){if(e.name==="AbortError")return}
+  if(await copy())say("Image sharing isn’t supported here. Text copied ✔ Paste it in Instagram.",1);
+};
+$("share").onclick=()=>{track("share-menu");shareNative()};
+$("copy").onclick=()=>{track("copy");copy()};
+$("gen").onclick=()=>{track("generate");gen()};
+["fest","lang","tone","len"].forEach(i=>$(i).onchange=gen);
+["to","from"].forEach(i=>$(i).oninput=rebuild);
 gen();
 </script>
 </body>
