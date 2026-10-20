@@ -27,6 +27,7 @@ h2{font-size:.9rem;margin:18px 0 6px;opacity:.8;font-weight:600}
 .card.sel{opacity:1;border-color:var(--fg);box-shadow:0 4px 14px rgba(0,0,0,.25)}
 .card small{position:absolute;top:10px;left:16px;font-size:.75rem;background:rgba(0,0,0,.3);padding:2px 10px;border-radius:99px}
 .txt{white-space:pre-wrap;text-align:center;font-size:1.02rem}
+[hidden]{display:none!important}#imgbox{margin-top:12px;text-align:center}#imgbox img{max-width:100%;border-radius:14px;border:1px solid var(--line)}#imgbox p{font-size:.85rem;margin:8px 0}.btn{display:inline-block;padding:12px 18px;border-radius:10px;background:var(--accent);color:var(--accent-fg);font-weight:600;text-decoration:none}
 #msg{min-height:1.4em;text-align:center;font-size:.9rem;margin-top:10px}
 #msg.ok{color:#2e7d32;font-weight:600}
 @media (prefers-color-scheme:dark){#msg.ok{color:#81c784}}
@@ -53,7 +54,9 @@ h2{font-size:.9rem;margin:18px 0 6px;opacity:.8;font-weight:600}
 <button id="ig">Instagram</button>
 <button id="share" class="alt">Share…</button>
 <button id="copy" class="alt">Copy</button>
+<button id="save" class="alt" style="grid-column:1/-1">⬇ Save as image (PNG)</button>
 </div>
+<div id="imgbox" hidden><img id="prev" alt="Wish image"><p id="imgtip"></p><a id="dl" class="btn" download="festival-wish.png">⬇ Download PNG</a></div>
 <div id="msg" aria-live="polite"></div>
 </main>
 <script>
@@ -78,65 +81,75 @@ const D={en:"Dear",te:"ప్రియమైన",hi:"प्रिय"};
 const C={en:"Celebrate with love and togetherness. 🙏",te:"ప్రేమతో, ఆనందంతో ఈ రోజును జరుపుకోండి. 🙏",hi:"प्रेम और खुशियों के साथ यह दिन मनाएँ। 🙏"};
 const B={
 en:{Warm:["May your life be filled with joy, health and prosperity. ✨","Wishing you and your family peace, love and happiness. 🌸","May all your dreams come true. 🌟","Sending you warm wishes and lots of love. ❤️","May this special day bring new hope and beautiful moments to your life. 🌈"],
-Funny:["May your sweets be unlimited and your diet take a holiday! 😄","Eat well, laugh loudly and forget your to-do list today! 🤣","May your phone be flooded with wishes and your stomach with delicious food! 😋"],
-Formal:["With warm regards on this auspicious occasion. May you and your family be blessed with good health and prosperity.","Wishing you contentment, success and good fortune in the days ahead.","May this occasion bring peace and happiness to you and your loved ones."]},
+Funny:["May your sweets be unlimited and your diet take a holiday! 😄","Eat well, laugh loudly and forget your to-do list today! 🤣","May your phone be flooded with wishes and your stomach with delicious food! 😋","Today’s plan: celebrate first, adult later! 😎"],
+Formal:["With warm regards on this auspicious occasion. May you and your family be blessed with good health and prosperity.","Wishing you contentment, success and good fortune in the days ahead.","May this occasion bring peace and happiness to you and your loved ones.","Wishing you and your esteemed family a joyful and memorable celebration."]},
 te:{Warm:["మీ జీవితం ఆనందం, ఆరోగ్యం, ఐశ్వర్యంతో నిండి ఉండాలని కోరుకుంటున్నాను. ✨","మీకు, మీ కుటుంబానికి శాంతి, ప్రేమ, సంతోషం కలగాలని ఆశిస్తున్నాను. 🌸","మీ కలలన్నీ నెరవేరాలని కోరుకుంటున్నాను. 🌟","మీకు ప్రేమపూర్వక శుభాకాంక్షలు. ❤️","ఈ ప్రత్యేక రోజు మీ జీవితంలో కొత్త ఆశలను, అందమైన క్షణాలను తీసుకురావాలి. 🌈"],
-Funny:["మీ స్వీట్లు తరగకూడదు, డైట్ మాత్రం సెలవు తీసుకోవాలి! 😄","హాయిగా తినండి, గట్టిగా నవ్వండి, ఈ రోజు పనుల లిస్ట్ మర్చిపోండి! 🤣","మీ ఫోన్ శుభాకాంక్షలతో, మీ ప్లేట్ రుచికరమైన వంటకాలతో నిండిపోవాలి! 😋"],
-Formal:["ఈ శుభ సందర్భంగా హృదయపూర్వక శుభాకాంక్షలు. మీకు, మీ కుటుంబానికి ఆరోగ్యం, ఐశ్వర్యం కలగాలని ఆశిస్తున్నాను.","రాబోయే రోజుల్లో మీకు సంతృప్తి, విజయం, అదృష్టం కలగాలని కోరుకుంటున్నాను.","ఈ సందర్భం మీకు, మీ ప్రియమైనవారికి శాంతి, సంతోషం తీసుకురావాలని ఆశిస్తున్నాను."]},
+Funny:["మీ స్వీట్లు తరగకూడదు, డైట్ మాత్రం సెలవు తీసుకోవాలి! 😄","హాయిగా తినండి, గట్టిగా నవ్వండి, ఈ రోజు పనుల లిస్ట్ మర్చిపోండి! 🤣","మీ ఫోన్ శుభాకాంక్షలతో, మీ ప్లేట్ రుచికరమైన వంటకాలతో నిండిపోవాలి! 😋","ఈ రోజు ప్లాన్ ఇదే: ముందు సంబరాలు, తర్వాతే బాధ్యతలు! 😎"],
+Formal:["ఈ శుభ సందర్భంగా హృదయపూర్వక శుభాకాంక్షలు. మీకు, మీ కుటుంబానికి ఆరోగ్యం, ఐశ్వర్యం కలగాలని ఆశిస్తున్నాను.","రాబోయే రోజుల్లో మీకు సంతృప్తి, విజయం, అదృష్టం కలగాలని కోరుకుంటున్నాను.","ఈ సందర్భం మీకు, మీ ప్రియమైనవారికి శాంతి, సంతోషం తీసుకురావాలని ఆశిస్తున్నాను.","మీకు, మీ గౌరవనీయ కుటుంబానికి ఆనందకరమైన, చిరస్మరణీయమైన వేడుక కావాలని ఆశిస్తున్నాను."]},
 hi:{Warm:["आपका जीवन खुशियों, स्वास्थ्य और समृद्धि से भरा रहे। ✨","आपको और आपके परिवार को शांति, प्रेम और खुशियाँ मिलें। 🌸","आपके सभी सपने पूरे हों। 🌟","आपको ढेर सारा प्यार और शुभकामनाएँ। ❤️","यह खास दिन आपके जीवन में नई उम्मीदें और सुंदर पल लाए। 🌈"],
-Funny:["आपकी मिठाइयाँ कभी खत्म न हों और डाइट छुट्टी पर चली जाए! 😄","मन भरकर खाइए, ज़ोर से हँसिए और आज काम की लिस्ट भूल जाइए! 🤣","आपका फ़ोन शुभकामनाओं से और पेट स्वादिष्ट पकवानों से भर जाए! 😋"],
-Formal:["इस शुभ अवसर पर हार्दिक शुभकामनाएँ। आपको और आपके परिवार को स्वास्थ्य और समृद्धि प्राप्त हो।","आने वाले दिनों में आपको संतोष, सफलता और सौभाग्य मिले।","यह अवसर आपके और आपके प्रियजनों के लिए शांति और खुशियाँ लाए।"]}
+Funny:["आपकी मिठाइयाँ कभी खत्म न हों और डाइट छुट्टी पर चली जाए! 😄","मन भरकर खाइए, ज़ोर से हँसिए और आज काम की लिस्ट भूल जाइए! 🤣","आपका फ़ोन शुभकामनाओं से और पेट स्वादिष्ट पकवानों से भर जाए! 😋","आज का प्लान: पहले जश्न, बाद में बाकी सब! 😎"],
+Formal:["इस शुभ अवसर पर हार्दिक शुभकामनाएँ। आपको और आपके परिवार को स्वास्थ्य और समृद्धि प्राप्त हो।","आने वाले दिनों में आपको संतोष, सफलता और सौभाग्य मिले।","यह अवसर आपके और आपके प्रियजनों के लिए शांति और खुशियाँ लाए।","आपको और आपके सम्मानित परिवार को आनंदमय और यादगार उत्सव की शुभकामनाएँ।"]}
 };
 const S={
 "Dasara": [
 "Ya Devi Sarvabhuteshu Shaktirupena Samsthita. Namastasyai Namastasyai Namastasyai Namo Namah.",
-"యా దేవీ సర్వభూతేషు శక్తిరూపేణ సంస్థితా । నమస్తస్యై నమస్తస్యై నమస్తస్యై నమో నమః ॥",
+"యా దేవీ సర్వభూతేషు శక్తిరూపేణ సంస్థితా। నమస్తస్యై నమస్తస్యై నమస్తస్యై నమో నమః॥",
 "या देवी सर्वभूतेषु शक्तिरूपेण संस्थिता। नमस्तस्यै नमस्तस्यै नमस्तस्यै नमो नमः॥"
 ],
 "Deepavali": [
-"Asato Ma Sadgamaya. Tamaso Ma Jyotirgamaya. Mrityor Ma Amritam Gamaya.",
-"అసతో మా సద్గమయ । తమసో మా జ్యోతిర్గమయ । మృత్యోర్మా అమృతం గమయ ॥",
-"असतो मा सद्गमय। तमसो मा ज्योतिर्गमय। मृत्योर्मा अमृतं गमय॥"
+"Shubham Karoti Kalyanam Arogyam Dhanasampadah. Shatrubuddhivinashaya Dipajyotirnamostu Te.",
+"శుభం కరోతి కల్యాణమ్ ఆరోగ్యం ధనసమ్పదః। శత్రుబుద్ధివినాశాయ దీపజ్యోతిర్నమోఽస్తు తే॥",
+"शुभं करोति कल्याणम् आरोग्यं धनसम्पदः। शत्रुबुद्धिविनाशाय दीपज्योतिर्नमोऽस्तु ते॥"
 ],
 "Ugadi": [
-"Shubham Karoti Kalyanam Arogyam Dhanasampadah. Shatrubuddhi Vinashaya Deepajyotir Namostu Te.",
-"శుభం కరోతి కల్యాణమారోగ్యం ధనసంపదః । శత్రుబుద్ధివినాశాయ దీపజ్యోతిర్నమోఽస్తు తే ॥",
-"शुभं करोति कल्याणमारोग्यं धनसम्पदः। शत्रुबुद्धिविनाशाय दीपज्योतिर्नमोऽस्तु ते॥"
+"Shatayurvajradehaya Sarvasampatkaraya Cha. Sarvarishtavinashaya Nimbakandalabhakshanam.",
+"శతాయుర్వజ్రదేహాయ సర్వసమ్పత్కరాయ చ। సర్వారిష్టవినాశాయ నిమ్బకన్దలభక్షణమ్॥",
+"शतायुर्वज्रदेहाय सर्वसम्पत्कराय च। सर्वारिष्टविनाशाय निम्बकन्दलभक्षणम्॥"
 ],
 "Sankranti": [
-"Om Bhur Bhuvah Svah. Tat Savitur Varenyam Bhargo Devasya Dhimahi. Dhiyo Yo Nah Prachodayat.",
-"ఓం భూర్భువః స్వః । తత్సవితుర్వరేణ్యం భర్గో దేవస్య ధీమహి । ధియో యో నః ప్రచోదయాత్ ॥",
-"ॐ भूर्भुवः स्वः। तत्सवितुर्वरेण्यं भर्गो देवस्य धीमहि। धियो यो नः प्रचोदयात्॥"
+"Japakusumasankasham Kashyapeyam Mahadyutim. Tamorim Sarvapapaghnam Pranatosmi Divakaram.",
+"జపాకుసుమసఙ్కాశం కాశ్యపేయం మహాద్యుతిమ్। తమోఽరిం సర్వపాపఘ్నం ప్రణతోఽస్మి దివాకరమ్॥",
+"जपाकुसुमसङ्काशं काश्यपेयं महाद्युतिम्। तमोऽरिं सर्वपापघ्नं प्रणतोऽस्मि दिवाकरम्॥"
 ],
 "Vinayaka Chavithi": [
 "Vakratunda Mahakaya Suryakoti Samaprabha. Nirvighnam Kuru Me Deva Sarvakaryeshu Sarvada.",
-"వక్రతుండ మహాకాయ సూర్యకోటి సమప్రభ । నిర్విఘ్నం కురు మే దేవ సర్వకార్యేషు సర్వదా ॥",
+"వక్రతుణ్డ మహాకాయ సూర్యకోటి సమప్రభ। నిర్విఘ్నం కురు మే దేవ సర్వకార్యేషు సర్వదా॥",
 "वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ। निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥"
 ],
 "Bathukamma": [
-"Sarva Mangala Mangalye Shive Sarvartha Sadhike. Sharanye Tryambake Gauri Narayani Namostu Te.",
-"సర్వమంగళమాంగళ్యే శివే సర్వార్థసాధికే । శరణ్యే త్ర్యంబకే గౌరి నారాయణి నమోఽస్తు తే ॥",
+"Sarvamangalamangalye Shive Sarvarthasadhike. Sharanye Tryambake Gauri Narayani Namostu Te.",
+"సర్వమఙ్గలమాఙ్గల్యే శివే సర్వార్థసాధికే। శరణ్యే త్ర్యమ్బకే గౌరి నారాయణి నమోఽస్తు తే॥",
 "सर्वमङ्गलमाङ्गल्ये शिवे सर्वार्थसाधिके। शरण्ये त्र्यम्बके गौरि नारायणि नमोऽस्तु ते॥"
 ],
 "Bonalu": [
-"Sarvasvarupe Sarveshe Sarvashakti Samanvite. Bhayebhyastrahi No Devi Durge Devi Namostu Te.",
-"సర్వస్వరూపే సర్వేశే సర్వశక్తిసమన్వితే । భయేభ్యస్త్రాహి నో దేవి దుర్గే దేవి నమోఽస్తు తే ॥",
+"Sarvasvarupe Sarveshe Sarvashaktisamanvite. Bhayebhyastrahi No Devi Durge Devi Namostu Te.",
+"సర్వస్వరూపే సర్వేశే సర్వశక్తిసమన్వితే। భయేభ్యస్త్రాహి నో దేవి దుర్గే దేవి నమోఽస్తు తే॥",
 "सर्वस्वरूपे सर्वेशे सर्वशक्तिसमन्विते। भयेभ्यस्त्राहि नो देवि दुर्गे देवि नमोऽस्तु ते॥"
 ],
 "Sri Rama Navami": [
-"Sri Rama Rama Rameti Rame Rame Manorame. Sahasranama Tattulyam Rama Nama Varanane.",
-"శ్రీరామ రామ రామేతి రమే రామే మనోరమే । సహస్రనామ తత్తుల్యం రామనామ వరాననే ॥",
+"Shrirama Rama Rameti Rame Rame Manorame. Sahasranama Tattulyam Ramanama Varanane.",
+"శ్రీరామ రామ రామేతి రమే రామే మనోరమే। సహస్రనామ తత్తుల్యం రామనామ వరాననే॥",
 "श्रीराम राम रामेति रमे रामे मनोरमे। सहस्रनाम तत्तुल्यं रामनाम वरानने॥"
 ],
 "Maha Shivaratri": [
-"Om Tryambakam Yajamahe Sugandhim Pushtivardhanam. Urvarukamiva Bandhanan Mrityor Mukshiya Mamritat.",
-"ఓం త్ర్యంబకం యజామహే సుగంధిం పుష్టివర్ధనమ్ । ఉర్వారుకమివ బంధనాన్మృత్యోర్ముక్షీయ మామృతాత్ ॥",
+"Om Tryambakam Yajamahe Sugandhim Pushtivardhanam. Urvarukamiva Bandhananmrityormukshiya Mamritat.",
+"ఓం త్ర్యమ్బకం యజామహే సుగన్ధిం పుష్టివర్ధనమ్। ఉర్వారుకమివ బన్ధనాన్మృత్యోర్ముక్షీయ మామృతాత్॥",
 "ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम्। उर्वारुकमिव बन्धनान्मृत्योर्मुक्षीय मामृतात्॥"
 ],
 "Varalakshmi Vratham": [
 "Om Mahalakshmyai Cha Vidmahe Vishnupatnyai Cha Dhimahi. Tanno Lakshmih Prachodayat.",
-"ఓం మహాలక్ష్మ్యై చ విద్మహే విష్ణుపత్న్యై చ ధీమహి । తన్నో లక్ష్మీః ప్రచోదయాత్ ॥",
+"ఓం మహాలక్ష్మ్యై చ విద్మహే విష్ణుపత్న్యై చ ధీమహి। తన్నో లక్ష్మీః ప్రచోదయాత్॥",
 "ॐ महालक्ष्म्यै च विद्महे विष्णुपत्न्यै च धीमहि। तन्नो लक्ष्मीः प्रचोदयात्॥"
+],
+"New Year": [
+"Sarve Bhavantu Sukhinah Sarve Santu Niramayah. Sarve Bhadrani Pashyantu Ma Kashchidduhkhabhagbhavet.",
+"సర్వే భవన్తు సుఖినః సర్వే సన్తు నిరామయాః। సర్వే భద్రాణి పశ్యన్తు మా కశ్చిద్దుఃఖభాగ్భవేత్॥",
+"सर्वे भवन्तु सुखिनः सर्वे सन्तु निरामयाः। सर्वे भद्राणि पश्यन्तु मा कश्चिद्दुःखभाग्भवेत्॥"
+],
+"Birthday": [
+"Pashyema Sharadah Shatam. Jivema Sharadah Shatam. Shrinuyama Sharadah Shatam.",
+"పశ్యేమ శరదః శతమ్। జీవేమ శరదః శతమ్। శృణుయామ శరదః శతమ్॥",
+"पश्येम शरदः शतम्। जीवेम शरदः शतम्। शृणुयाम शरदः शतम्॥"
 ],
 "Eid": [
 "Taqabbalallahu minna wa minkum",
@@ -147,31 +160,22 @@ const S={
 "“Glory to God in the highest, and on earth peace, goodwill toward men.” (Luke 2:14)",
 "“సర్వోన్నత స్థలములలో దేవునికి మహిమ, భూమిపై సమాధానము కలుగును గాక.” (లూకా 2:14)",
 "“आकाश में परमेश्वर की महिमा हो, और धरती पर शांति हो।” (लूका 2:14)"
-],
-"New Year": [
-"Sarve Bhavantu Sukhinah Sarve Santu Niramayah. Sarve Bhadrani Pashyantu Ma Kashchid Duhkhabhag Bhavet.",
-"సర్వే భవంతు సుఖినః సర్వే సంతు నిరామయాః । సర్వే భద్రాణి పశ్యంతు మా కశ్చిద్దుఃఖభాగ్భవేత్ ॥",
-"सर्वे भवन्तु सुखिनः सर्वे सन्तु निरामयाः। सर्वे भद्राणि पश्यन्तु मा कश्चिद्दुःखभाग्भवेत्॥"
-],
-"Birthday": [
-"Pashyema Sharadah Shatam. Jivema Sharadah Shatam. Shrinuyama Sharadah Shatam.",
-"పశ్యేమ శరదః శతం । జీవేమ శరదః శతం । శృణుయామ శరదః శతం ॥",
-"पश्येम शरदः शतम्। जीवेम शरदः शतम्। शृणुयाम शरदः शतम्॥"
 ]
 };
 const G=[["#ff6f00","#d81b60"],["#1e88e5","#8e24aa"],["#00897b","#43a047"],["#e53935","#fb8c00"]];
 const LEN={short:1,medium:2,long:3};
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 function build(k,L,len,order,to,from){
-  const n=LEN[len],off=v=>order.length<=n?v:v*n,out=[];
-  for(let v=0;v<3;v++){
-    const bl=[];for(let i=0;i<n;i++)bl.push(order[(off(v)+i)%order.length]);
-    let t=(to?D[L]+" "+to+",\n\n":"")+F[k][0]+" "+F[k][LI[L]]+"!\n\n"+bl.join(" ")+"\n\n"+S[k][LI[L]-1];
+  const n=LEN[len],P=order.length;
+  const sets=st=>[0,1,2].map(v=>Array.from({length:n},(_,i)=>(v*st+i)%P));
+  const uniq=a=>new Set(a.map(x=>x.slice().sort().join())).size===3;
+  let ix=sets(n);if(!uniq(ix))ix=sets(1);
+  return ix.map(idx=>{
+    let t=(to?D[L]+" "+to+",\n\n":"")+F[k][0]+" "+F[k][LI[L]]+"!\n\n"+idx.map(i=>order[i]).join(" ")+"\n\n"+S[k][LI[L]-1];
     if(len==="long")t+="\n\n"+C[L];
     if(from)t+="\n\n— "+from;
-    out.push(t);
-  }
-  return out;
+    return t;
+  });
 }
 //UI
 const $=id=>document.getElementById(id);
@@ -183,7 +187,7 @@ function say(t,ok){const m=$("msg");m.textContent=t;m.className=ok?"ok":"";clear
 function flash(b,label){if(!b.dataset.l)b.dataset.l=b.textContent;b.textContent=label;clearTimeout(b._t);b._t=setTimeout(()=>{b.textContent=b.dataset.l},1600)}
 const cur=()=>texts[sel];
 function render(){
-  const box=$("cards");box.textContent="";
+  const box=$("cards");box.textContent="";$("imgbox").hidden=true;
   texts.forEach((t,i)=>{
     const d=document.createElement("div"),h=document.createElement("small"),p=document.createElement("div");
     d.className="card"+(i===sel?" sel":"");d.tabIndex=0;d.setAttribute("role","radio");d.setAttribute("aria-checked",i===sel?"true":"false");
@@ -231,6 +235,28 @@ function makeImage(t,g){
     c.toBlob(b=>res(b),"image/png");
   });
 }
+const CAN_DL=true;
+let imgUrl="";
+const toDataUrl=b=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(b)});
+async function showImage(b){
+  b=b||await makeImage(cur(),grads[sel]);
+  if(imgUrl)URL.revokeObjectURL(imgUrl);
+  imgUrl=URL.createObjectURL(b);
+  $("prev").src=await toDataUrl(b);
+  const a=$("dl");a.href=imgUrl;a.hidden=!CAN_DL;
+  $("imgtip").textContent=CAN_DL?"Tap Download PNG, or press and hold the image to save it. Then post it from Instagram.":"Press and hold the image to save it, then post it from Instagram.";
+  $("imgbox").hidden=false;
+  try{$("imgbox").scrollIntoView({behavior:"smooth",block:"nearest"})}catch(e){}
+  return b;
+}
+$("save").onclick=async()=>{
+  track("save-image");
+  try{
+    await showImage();
+    if(CAN_DL){$("dl").click();flash($("save"),"Saved ✔");say("PNG downloading. Check your Downloads ✔",1)}
+    else say("Image ready below. Press and hold it to save.",1);
+  }catch(e){say("Couldn’t create the image on this device. Use Copy instead.")}
+};
 $("wa").onclick=()=>{
   track("share-whatsapp");say("Opening WhatsApp…",1);
   const u="https://wa.me/?text="+encodeURIComponent(cur());
@@ -238,11 +264,14 @@ $("wa").onclick=()=>{
 };
 $("ig").onclick=async()=>{
   track("share-instagram");
+  let b;
   try{
-    const b=await makeImage(cur(),grads[sel]),f=new File([b],"wish.png",{type:"image/png"});
+    b=await makeImage(cur(),grads[sel]);
+    const f=new File([b],"festival-wish.png",{type:"image/png"});
     if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f]});flash($("ig"),"Shared ✔");return}
   }catch(e){if(e.name==="AbortError")return}
-  if(await copy())say("Image sharing isn’t supported here. Text copied ✔ Paste it in Instagram.",1);
+  try{await showImage(b);say("Image sharing isn’t supported here. Your image is ready below. Save it, then post it from Instagram. Use Copy for the caption.",1)}
+  catch(e){if(await copy())say("Couldn’t make the image here, so the text was copied ✔ Paste it in Instagram.",1)}
 };
 $("share").onclick=()=>{track("share-menu");shareNative()};
 $("copy").onclick=()=>{track("copy");copy()};
