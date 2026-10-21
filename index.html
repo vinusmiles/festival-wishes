@@ -526,16 +526,18 @@ $("save").onclick=async()=>{
   try{await showImage(b);say("This browser can’t share images directly. Your image is ready below to download.",1)}
   catch(e){say("Couldn’t create the image on this device. Use Copy instead.")}
 };
+// WhatsApp: opens WhatsApp with the wish text filled in, ready to pick a chat
+$("wa").onclick=()=>{
+  if(!need())return;track("share-whatsapp");say("Opening WhatsApp…",1);
+  const u="https://wa.me/?text="+encodeURIComponent(cur());
+  setTimeout(()=>{location.href=u},300);
+};
+// Instagram: it has no link that fills in text, so copy the wish and open Instagram Direct to paste it
 $("ig").onclick=async()=>{
   if(!need())return;track("share-instagram");
-  let b;
-  try{
-    b=await makeImage(clean(texts[sel]),grads[sel]);
-    const f=new File([b],"festival-wish.png",{type:"image/png"});
-    if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f]});flash($("ig"),"Shared ✔");return}
-  }catch(e){if(e.name==="AbortError")return}
-  try{await showImage(b);say("Image sharing isn’t supported here. Your image is ready below. Save it, then post it from Instagram. Use Copy for the caption.",1)}
-  catch(e){if(await copy())say("Couldn’t make the image here, so the text was copied ✔ Paste it in Instagram.",1)}
+  const ok=await copy();
+  say(ok?"Wish copied ✔ Opening Instagram… paste it in a chat (press and hold → Paste).":"Opening Instagram…",1);
+  setTimeout(()=>{location.href="https://www.instagram.com/direct/inbox/"},900);
 };
 $("share").onclick=()=>{if(!need())return;track("share-menu");shareNative()};
 $("copy").onclick=()=>{if(!need())return;track("copy");copy()};
