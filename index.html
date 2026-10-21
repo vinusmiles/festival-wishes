@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Festival Wishes</title>
+<title>Festival Wishes Generator</title>
 <meta name="theme-color" content="#d81b60">
 <meta name="description" content="Create festival wishes with shlokas in Telugu, English and Hindi and share them on WhatsApp and Instagram.">
 <script data-goatcounter="https://vinusmiles.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
@@ -44,6 +44,12 @@ h2{font-size:.9rem;margin:18px 0 6px;opacity:.8;font-weight:600}
 .shloka.en{font-family:"Noto Serif",Georgia,serif;font-style:italic;line-height:1.9}
 .shloka.ar{font-family:"Noto Naskh Arabic",serif;font-size:1.3rem;font-style:normal}
 .mean{font-size:.9rem;font-weight:400;line-height:1.5;margin:6px 4px 4px;opacity:.97}
+.card .edbtn{position:absolute;top:6px;right:10px;font-size:.8rem;padding:5px 12px;border-radius:99px;background:rgba(0,0,0,.35);color:#fff;border:1px solid rgba(255,255,255,.6);font-weight:600}
+.card.editing .edbtn{background:#fff;color:#1c1b1f;border-color:#fff}
+.empty{text-align:center;opacity:.7;font-size:.9rem;padding:24px 8px;border:1px dashed var(--line);border-radius:14px;margin-top:10px}
+.card [contenteditable]{outline:2px dashed rgba(255,255,255,.85);outline-offset:4px;border-radius:6px;cursor:text;min-height:1.5em}
+.card [contenteditable]:empty::before{content:attr(data-ph);opacity:.7}
+.card.editing{opacity:1;cursor:default}
 #msg{min-height:1.4em;text-align:center;font-size:.9rem;margin-top:10px}
 #msg.ok{color:#2e7d32;font-weight:600}
 @media (prefers-color-scheme:dark){#msg.ok{color:#81c784}}
@@ -51,11 +57,11 @@ h2{font-size:.9rem;margin:18px 0 6px;opacity:.8;font-weight:600}
 </head>
 <body>
 <main>
-<h1>🎉 Festival Wishes</h1>
+<h1>🎉 Festival Wishes Generator</h1>
 <label for="fest">Festival</label><select id="fest"></select>
 <div class="g3">
 <div><label for="lang">Language</label><select id="lang"><option value="te">తెలుగు</option><option value="en">English</option><option value="hi">हिन्दी</option></select></div>
-<div><label for="tone">Tone</label><select id="tone"><option>Warm</option><option>Funny</option><option>Formal</option></select></div>
+<div><label for="tone">Tone</label><select id="tone"><option>Warm</option><option>Formal</option></select></div>
 <div><label for="len">Length</label><select id="len"><option value="short">Short</option><option value="medium" selected>Medium</option><option value="long">Long</option></select></div>
 </div>
 <div class="g2">
@@ -63,8 +69,8 @@ h2{font-size:.9rem;margin:18px 0 6px;opacity:.8;font-weight:600}
 <div><label for="from">From (optional)</label><input id="from" maxlength="30" placeholder="Your name" autocomplete="off"></div>
 </div>
 <button id="gen">✨ Create 3 wishes</button>
-<h2>Tap a wish to choose it</h2>
-<div id="cards" role="radiogroup"></div>
+<h2 id="pickh" hidden>Tap a wish to choose it</h2>
+<div id="cards" role="radiogroup"><p class="empty">Choose your options, then tap ✨ Create 3 wishes.</p></div>
 <div class="g2" style="margin-top:12px">
 <button id="wa">WhatsApp</button>
 <button id="ig">Instagram</button>
@@ -78,33 +84,102 @@ h2{font-size:.9rem;margin:18px 0 6px;opacity:.8;font-weight:600}
 <script>
 const F={
 "Dasara":["🏹","Happy Dasara","దసరా శుభాకాంక్షలు","दशहरा की हार्दिक शुभकामनाएँ"],
-"Deepavali":["🪔","Happy Deepavali","దీపావళి శుభాకాంక్షలు","दीपावली की हार्दिक शुभकामनाएँ"],
+"Diwali":["🪔","Happy Diwali","దీపావళి శుభాకాంక్షలు","दिवाली की हार्दिक शुभकामनाएँ"],
 "Ugadi":["🌿","Happy Ugadi","ఉగాది శుభాకాంక్షలు","उगादी की हार्दिक शुभकामनाएँ"],
-"Sankranti":["🪁","Happy Sankranti","సంక్రాంతి శుభాకాంక్షలు","संक्रांति की हार्दिक शुभकामनाएँ"],
+"Sankranti":["🪁","Happy Sankranti","సంక్రాంతి శుభాకాంక్షలు","मकर संक्रांति की हार्दिक शुभकामनाएँ"],
 "Vinayaka Chavithi":["🐘","Happy Vinayaka Chavithi","వినాయక చవితి శుభాకాంక్షలు","गणेश चतुर्थी की हार्दिक शुभकामनाएँ"],
-"Bathukamma":["🌼","Happy Bathukamma","బతుకమ్మ శుభాకాంక్షలు","बथुकम्मा की हार्दिक शुभकामनाएँ"],
-"Bonalu":["🥁","Happy Bonalu","బోనాల శుభాకాంక్షలు","बोनालू की हार्दिक शुभकामनाएँ"],
+"Bathukamma":["🌼","Happy Bathukamma","బతుకమ్మ శుభాకాంక్షలు","बतुकम्मा की हार्दिक शुभकामनाएँ"],
+"Bonalu":["🥁","Happy Bonalu","బోనాల పండుగ శుభాకాంక్షలు","बोनालु की हार्दिक शुभकामनाएँ"],
 "Sri Rama Navami":["🏹","Happy Sri Rama Navami","శ్రీరామ నవమి శుభాకాంక్షలు","राम नवमी की हार्दिक शुभकामनाएँ"],
 "Maha Shivaratri":["🔱","Happy Maha Shivaratri","మహాశివరాత్రి శుభాకాంక్షలు","महाशिवरात्रि की हार्दिक शुभकामनाएँ"],
 "Varalakshmi Vratham":["🪷","Happy Varalakshmi Vratham","వరలక్ష్మీ వ్రతం శుభాకాంక్షలు","वरलक्ष्मी व्रत की हार्दिक शुभकामनाएँ"],
 "Eid":["🌙","Eid Mubarak","ఈద్ ముబారక్","ईद मुबारक"],
 "Christmas":["🎄","Merry Christmas","క్రిస్మస్ శుభాకాంక్షలు","क्रिसमस की हार्दिक शुभकामनाएँ"],
-"New Year":["🎉","Happy New Year","నూతన సంవత్సర శుభాకాంక్షలు","नववर्ष की हार्दिक शुभकामनाएँ"],
+"New Year":["🎉","Happy New Year","నూతన సంవత్సర శుభాకాంక్షలు","नए साल की हार्दिक शुभकामनाएँ"],
 "Birthday":["🎂","Happy Birthday","పుట్టినరోజు శుభాకాంక్షలు","जन्मदिन की हार्दिक शुभकामनाएँ"]
 };
 const LI={en:1,te:2,hi:3};
 const D={en:"Dear",te:"ప్రియమైన",hi:"प्रिय"};
-const C={en:"Celebrate with love and togetherness. 🙏",te:"ప్రేమతో, ఆనందంతో ఈ రోజును జరుపుకోండి. 🙏",hi:"प्रेम और खुशियों के साथ यह दिन मनाएँ। 🙏"};
+// Closing line for Long wishes, by tone
+const C={en:{Warm:"Enjoy the day with your loved ones. 🙏",Formal:"With warm regards.",Funny:"Now go cut that cake before someone else does! 🎉"},
+te:{Warm:"అందరితో కలిసి ఆనందంగా గడపండి. 🙏",Formal:"శుభాభినందనలతో.",Funny:"త్వరగా కేక్ కట్ చేయండి, మేం ఎదురుచూస్తున్నాం! 🎉"},
+hi:{Warm:"अपनों के संग यह दिन खूब अच्छे से मनाइए। 🙏",Formal:"सादर।",Funny:"जल्दी केक काटिए, हम इंतज़ार कर रहे हैं! 🎉"}};
+// General lines, by language and tone
 const B={
-en:{Warm:["May your life be filled with joy, health and prosperity. ✨","Wishing you and your family peace, love and happiness. 🌸","May all your dreams come true. 🌟","Sending you warm wishes and lots of love. ❤️","May this special day bring new hope and beautiful moments to your life. 🌈"],
-Funny:["May your sweets be unlimited and your diet take a holiday! 😄","Eat well, laugh loudly and forget your to-do list today! 🤣","May your phone be flooded with wishes and your stomach with delicious food! 😋","Today’s plan: celebrate first, adult later! 😎"],
-Formal:["With warm regards on this auspicious occasion. May you and your family be blessed with good health and prosperity.","Wishing you contentment, success and good fortune in the days ahead.","May this occasion bring peace and happiness to you and your loved ones.","Wishing you and your esteemed family a joyful and memorable celebration."]},
-te:{Warm:["మీ జీవితం ఆనందం, ఆరోగ్యం, ఐశ్వర్యంతో నిండి ఉండాలని కోరుకుంటున్నాను. ✨","మీకు, మీ కుటుంబానికి శాంతి, ప్రేమ, సంతోషం కలగాలని ఆశిస్తున్నాను. 🌸","మీ కలలన్నీ నెరవేరాలని కోరుకుంటున్నాను. 🌟","మీకు ప్రేమపూర్వక శుభాకాంక్షలు. ❤️","ఈ ప్రత్యేక రోజు మీ జీవితంలో కొత్త ఆశలను, అందమైన క్షణాలను తీసుకురావాలి. 🌈"],
-Funny:["మీ స్వీట్లు తరగకూడదు, డైట్ మాత్రం సెలవు తీసుకోవాలి! 😄","హాయిగా తినండి, గట్టిగా నవ్వండి, ఈ రోజు పనుల లిస్ట్ మర్చిపోండి! 🤣","మీ ఫోన్ శుభాకాంక్షలతో, మీ ప్లేట్ రుచికరమైన వంటకాలతో నిండిపోవాలి! 😋","ఈ రోజు ప్లాన్ ఇదే: ముందు సంబరాలు, తర్వాతే బాధ్యతలు! 😎"],
-Formal:["ఈ శుభ సందర్భంగా హృదయపూర్వక శుభాకాంక్షలు. మీకు, మీ కుటుంబానికి ఆరోగ్యం, ఐశ్వర్యం కలగాలని ఆశిస్తున్నాను.","రాబోయే రోజుల్లో మీకు సంతృప్తి, విజయం, అదృష్టం కలగాలని కోరుకుంటున్నాను.","ఈ సందర్భం మీకు, మీ ప్రియమైనవారికి శాంతి, సంతోషం తీసుకురావాలని ఆశిస్తున్నాను.","మీకు, మీ గౌరవనీయ కుటుంబానికి ఆనందకరమైన, చిరస్మరణీయమైన వేడుక కావాలని ఆశిస్తున్నాను."]},
-hi:{Warm:["आपका जीवन खुशियों, स्वास्थ्य और समृद्धि से भरा रहे। ✨","आपको और आपके परिवार को शांति, प्रेम और खुशियाँ मिलें। 🌸","आपके सभी सपने पूरे हों। 🌟","आपको ढेर सारा प्यार और शुभकामनाएँ। ❤️","यह खास दिन आपके जीवन में नई उम्मीदें और सुंदर पल लाए। 🌈"],
-Funny:["आपकी मिठाइयाँ कभी खत्म न हों और डाइट छुट्टी पर चली जाए! 😄","मन भरकर खाइए, ज़ोर से हँसिए और आज काम की लिस्ट भूल जाइए! 🤣","आपका फ़ोन शुभकामनाओं से और पेट स्वादिष्ट पकवानों से भर जाए! 😋","आज का प्लान: पहले जश्न, बाद में बाकी सब! 😎"],
-Formal:["इस शुभ अवसर पर हार्दिक शुभकामनाएँ। आपको और आपके परिवार को स्वास्थ्य और समृद्धि प्राप्त हो।","आने वाले दिनों में आपको संतोष, सफलता और सौभाग्य मिले।","यह अवसर आपके और आपके प्रियजनों के लिए शांति और खुशियाँ लाए।","आपको और आपके सम्मानित परिवार को आनंदमय और यादगार उत्सव की शुभकामनाएँ।"]}
+en:{Warm:["Wishing you and your family lots of happiness and good health. ❤️","May the days ahead bring you good news and peace of mind. 🌸","Thinking of you today and sending a big hug. 🤗","Hope you have the best day. ✨","May everything you're hoping for fall into place. 🌟"],
+Formal:["Wishing you and your family good health, peace and prosperity.","May this occasion bring happiness to your home.","Wishing you success and contentment in the days ahead.","May the coming days bring you peace and fulfilment.","May your family always be safe and happy."]},
+te:{Warm:["మీకు, మీ కుటుంబానికి ఎప్పుడూ సంతోషం, ఆరోగ్యం ఉండాలి. ❤️","మీ ఇల్లు నవ్వులతో, సందడితో నిండిపోవాలి. 😊","రాబోయే రోజులన్నీ మీకు మంచి వార్తలు తీసుకురావాలి. 🌸","మీ ఇంట్లో ఎప్పుడూ ఇలాగే పండగ వాతావరణం ఉండాలి. ✨","మీరు అనుకున్నవన్నీ జరగాలి. 🌟"],
+Formal:["మీకు, మీ కుటుంబ సభ్యులకు ఆయురారోగ్య ఐశ్వర్యాలు కలగాలని ఆకాంక్షిస్తున్నాను.","ఈ శుభ సందర్భం మీ ఇంట సుఖశాంతులు నింపాలని కోరుకుంటున్నాను.","మీకు అన్ని రంగాల్లో విజయం కలగాలని ఆశిస్తున్నాను.","రాబోయే రోజులు మీకు సంతోషాన్ని, సంతృప్తిని అందించాలి.","మీ కుటుంబమంతా క్షేమంగా, సంతోషంగా ఉండాలని కోరుకుంటున్నాను."]},
+hi:{Warm:["आप और आपका परिवार हमेशा खुश और सेहतमंद रहें। ❤️","आपका घर हँसी-खुशी से भरा रहे। 😊","आने वाले दिन आपके लिए ढेर सारी खुशखबरियाँ लाएँ। 🌸","आपकी ज़िंदगी में यूँ ही रौनक बनी रहे। ✨","आपकी हर मनोकामना पूरी हो। 🌟"],
+Formal:["आपको और आपके परिवार को उत्तम स्वास्थ्य, सुख और समृद्धि की शुभकामनाएँ।","यह शुभ अवसर आपके घर में सुख-शांति लाए।","आपको हर क्षेत्र में सफलता मिले।","आने वाले दिन आपके लिए संतोष और प्रसन्नता से भरे हों।","आपका परिवार सदा कुशल और प्रसन्न रहे।"]}
+};
+// Funny tone: Birthday only. "open" starts each wish, "more" adds lines for Medium/Long
+const FUN={
+en:{open:["Don't count the candles, just enjoy the cake! 🎂","You're not getting older, you're just levelling up! 🎮","Another year older, but your heart is still a kid's! 😜"],
+more:["Eat all the cake you want today, the diet can start tomorrow. 🍰","Make a wish, blow out the candles, and try not to set off the smoke alarm! 🔥","Hope your phone gets so many wishes today that it hangs! 📱","Today you have full permission to be lazy and get spoiled. 😎","So, when and where is the party? Don't forget to invite me! 🥳"]},
+te:{open:["కొవ్వొత్తులు లెక్కపెట్టకండి, కేక్ మీద దృష్టి పెట్టండి! 🎂","వయసు పెరుగుతోంది అనుకోకండి, అనుభవం పెరుగుతోంది అంతే! 😄","ఇంకో ఏడాది పెద్దయ్యారు, కానీ మనసు మాత్రం ఇంకా చిన్నపిల్లలదే! 😜"],
+more:["ఈ రోజు కేక్ ఎంత కావాలంటే అంత తినండి, డైట్ రేపటి నుండి! 🍰","కొవ్వొత్తులు ఊదేటప్పుడు ఫైర్ అలారం మోగకుండా జాగ్రత్త! 🔥","ఈ రోజు మీ ఫోన్ మెసేజ్‌లతో హ్యాంగ్ అయిపోవాలి! 📱","ఈ రోజు పని లేదు, బాధ్యత లేదు, ఫుల్ ఎంజాయ్ మాత్రమే! 😎","పార్టీ ఎప్పుడు? ఎక్కడ? మర్చిపోకుండా నన్ను పిలవండి! 🥳"]},
+hi:{open:["मोमबत्तियाँ मत गिनिए, बस केक पर ध्यान दीजिए! 🎂","उम्र नहीं बढ़ रही, बस तजुर्बा बढ़ रहा है! 😄","एक साल और बड़े हो गए, पर दिल अभी भी बच्चा है! 😜"],
+more:["आज जितना मन करे केक खाइए, डाइट कल से! 🍰","मोमबत्तियाँ बुझाते वक्त ध्यान रखिए, फ़ायर अलार्म न बज जाए! 🔥","आज आपका फ़ोन शुभकामनाओं से हैंग हो जाए! 📱","आज न कोई काम, न कोई टेंशन, बस मस्ती ही मस्ती! 😎","पार्टी कब और कहाँ है? हमें बुलाना मत भूलिए! 🥳"]}
+};
+// Festival-specific lines: each of the 3 wishes opens with a different one
+const FL={
+"Dasara":{
+en:["May Durga Maa give you strength and courage. 🙏","May good always win in your life, just as it did on Vijayadashami. 🏹","Hope everything you start this Dasara brings you success. 🌼"],
+te:["అమ్మవారి దయతో మీకు ఎప్పుడూ ధైర్యం, బలం ఉండాలి. 🙏","చెడుపై మంచి గెలిచిన ఈ రోజున, మీ జీవితంలో కూడా అంతా మంచే జరగాలి. 🏹","ఈ విజయదశమి నాడు మొదలుపెట్టే ప్రతి పనిలో మీకు విజయం కలగాలి. 🌼"],
+hi:["माँ दुर्गा आपको शक्ति और हिम्मत दें। 🙏","जैसे इस दिन बुराई पर अच्छाई की जीत हुई, वैसे ही आपके जीवन में भी सब अच्छा हो। 🏹","विजयादशमी पर आप जो भी शुरू करें, उसमें आपको सफलता मिले। 🌼"]},
+"Diwali":{
+en:["May the diyas light up your home with happiness. 🪔","Wishing you sweets, crackers and a house full of family. 🎆","May Lakshmi Devi bless your home with prosperity. 🪷"],
+te:["దీపాల వెలుగులా మీ ఇల్లంతా సంతోషంతో వెలిగిపోవాలి. 🪔","స్వీట్లు, టపాసులు, కుటుంబమంతా ఒక్కచోట… ఈ దీపావళి అలా హాయిగా సాగాలి. 🎆","లక్ష్మీదేవి అనుగ్రహంతో మీ ఇంట సిరిసంపదలు నిండాలి. 🪷"],
+hi:["दीयों की रोशनी आपके घर को खुशियों से भर दे। 🪔","मिठाइयाँ, पटाखे और पूरा परिवार साथ… ऐसी ही प्यारी हो आपकी दिवाली। 🎆","माँ लक्ष्मी की कृपा से आपके घर में सुख-समृद्धि बनी रहे। 🪷"]},
+"Ugadi":{
+en:["Like Ugadi pachadi, may the new year bring every taste of life, with a lot more sweet. 🌿","Wishing you a fresh start and a wonderful year ahead. 🌸","May the new year bring good health and new beginnings to your family. ✨"],
+te:["ఉగాది పచ్చడిలాగే ఈ కొత్త సంవత్సరం అన్ని రుచుల కలయికగా ఉండాలి, తీపి మాత్రం ఎక్కువగా ఉండాలి. 🌿","కొత్త సంవత్సరం మీకు కొత్త ఆశలు, కొత్త విజయాలు తీసుకురావాలి. 🌸","ఈ ఏడాదంతా మీ కుటుంబానికి ఆరోగ్యం, ఆనందం ఉండాలి. ✨"],
+hi:["उगादी पचड़ी की तरह नया साल ज़िंदगी के हर स्वाद से भरा हो, बस मिठास ज़्यादा हो। 🌿","नया साल आपके लिए नई उम्मीदें और नई कामयाबियाँ लाए। 🌸","पूरा साल आपके परिवार के लिए सेहत और खुशियों भरा रहे। ✨"]},
+"Sankranti":{
+en:["Wishing you a harvest of happiness this Sankranti. 🌾","May your kites fly high and your worries stay on the ground. 🪁","Hope your home is full of rangolis, sweets and family. 🏡"],
+te:["ఈ సంక్రాంతి మీ ఇంట ధాన్యరాశులు, సంతోషాలు నింపాలి. 🌾","మీ గాలిపటాల్లాగే మీ ఆశలు కూడా ఎత్తుకు ఎగరాలి. 🪁","ముంగిట్లో ముగ్గులు, ఇంట్లో పిండివంటలు, చుట్టూ బంధువులు… పండగ అంటే ఇదే! 🏡"],
+hi:["मकर संक्रांति आपके घर ढेर सारी खुशियाँ और बरकत लाए। 🌾","आपकी पतंग की तरह आपके सपने भी ऊँची उड़ान भरें। 🪁","तिल-गुड़ की मिठास आपके रिश्तों में हमेशा बनी रहे। 🍬"]},
+"Vinayaka Chavithi":{
+en:["May Ganapati remove every obstacle from your path. 🐘","Wishing you a home full of kudumulu, laughter and Ganesha's blessings. 🙏","May everything you begin go smoothly with Vinayaka's blessings. ✨"],
+te:["విఘ్నేశ్వరుడు మీ దారిలోని అడ్డంకులన్నీ తొలగించాలి. 🐘","ఉండ్రాళ్లు, కుడుములు, వినాయకుడి ఆశీస్సులతో మీ ఇల్లు కళకళలాడాలి. 🙏","మీరు మొదలుపెట్టే ప్రతి పని నిర్విఘ్నంగా పూర్తవ్వాలి. ✨"],
+hi:["गणपति बप्पा आपकी राह की हर बाधा दूर करें। 🐘","मोदक की मिठास और बप्पा का आशीर्वाद आपके घर हमेशा बना रहे। 🙏","आप जो भी काम शुरू करें, वह बिना रुकावट पूरा हो। ✨"]},
+"Bathukamma":{
+en:["May your life be as colourful as the Bathukamma flowers. 🌼","Wishing you happy days of songs, flowers and togetherness. 🎶","May Gauramma bless your family with health and happiness. 🙏"],
+te:["బతుకమ్మ పూలలా మీ జీవితం రంగులమయం కావాలి. 🌼","ఆటపాటలతో, పూలతో, అందరితో కలిసి ఈ పండగ ఘనంగా జరగాలి. 🎶","గౌరమ్మ దీవెనలతో మీ కుటుంబమంతా చల్లగా ఉండాలి. 🙏"],
+hi:["बतुकम्मा के फूलों की तरह आपका जीवन रंगों से भरा रहे। 🌼","गीतों, फूलों और अपनों के साथ यह त्योहार खूब धूमधाम से मनाएँ। 🎶","गौरी माँ के आशीर्वाद से आपका परिवार सुखी रहे। 🙏"]},
+"Bonalu":{
+en:["May Mahankali Amma always protect you and your family. 🙏","Wishing you a joyful Bonalu full of drums, devotion and family. 🥁","May the Goddess bless your home with good health and peace. 🌺"],
+te:["మహంకాళి అమ్మవారు మిమ్మల్ని, మీ కుటుంబాన్ని ఎల్లప్పుడూ చల్లగా చూడాలి. 🙏","డప్పుల మోతతో, భక్తితో, బంధువులతో ఈ బోనాల పండగ సందడిగా సాగాలి. 🥁","అమ్మవారి దయతో మీ ఇంట ఆరోగ్యం, శాంతి ఉండాలి. 🌺"],
+hi:["महाकाली माँ आपकी और आपके परिवार की सदा रक्षा करें। 🙏","ढोल, भक्ति और अपनों के साथ बोनालु का त्योहार खूब धूमधाम से मनाएँ। 🥁","माँ की कृपा से आपके घर में सेहत और शांति बनी रहे। 🌺"]},
+"Sri Rama Navami":{
+en:["May Sita Rama's blessings bring peace and harmony to your home. 🙏","Hope you enjoy the panakam, vadapappu and the joy of the Kalyanam. 🌼","May you always have the strength to walk the right path, like Sri Rama. 🏹"],
+te:["సీతారాముల కృపతో మీ ఇల్లు సుఖశాంతులతో ఉండాలి. 🙏","పానకం, వడపప్పు, సీతారాముల కళ్యాణం… ఈ శ్రీరామ నవమి మీకు ఆనందంగా సాగాలి. 🌼","శ్రీరాముడిలా ఎప్పుడూ ధర్మమార్గంలో నడిచే బలం మీకు కలగాలి. 🏹"],
+hi:["प्रभु श्रीराम की कृपा से आपके घर सुख-शांति बनी रहे। 🙏","राम जी का आशीर्वाद आपके परिवार पर सदा बना रहे। 🌼","श्रीराम की तरह आप भी हमेशा सच्चाई की राह पर चलें। 🏹"]},
+"Maha Shivaratri":{
+en:["May Lord Shiva bless you with peace, strength and good health. 🔱","Wishing you a calm and blessed night of prayer. 🙏","Om Namah Shivaya. May Mahadev look after you and your family. 🕉️"],
+te:["ఆ పరమశివుని దయతో మీకు ఆయురారోగ్యాలు, మనశ్శాంతి కలగాలి. 🔱","శివనామ స్మరణతో ఈ జాగరణ రాత్రి మీకు ప్రశాంతంగా సాగాలి. 🙏","ఓం నమః శివాయ. ఆ భోళాశంకరుడు మీ కుటుంబాన్ని ఎప్పుడూ కాపాడాలి. 🕉️"],
+hi:["भोलेनाथ की कृपा से आपको सुख, शांति और अच्छी सेहत मिले। 🔱","शिव भक्ति की यह रात आपके मन को शांति से भर दे। 🙏","हर हर महादेव! महादेव आपके परिवार पर सदा कृपा बनाए रखें। 🕉️"]},
+"Varalakshmi Vratham":{
+en:["May Varalakshmi Devi fill your home with wealth, health and happiness. 🪷","May the Goddess grant every wish you pray for today. 🙏","Wishing you a blessed vratham surrounded by family. ✨"],
+te:["వరలక్ష్మీ అమ్మవారి కృపతో మీ ఇంట సిరిసంపదలు, సౌభాగ్యం నిండాలి. 🪷","మీరు కోరుకున్న వరాలన్నీ అమ్మవారు ప్రసాదించాలి. 🙏","వ్రతం చక్కగా జరిగి, మీ కుటుంబమంతా సంతోషంగా ఉండాలి. ✨"],
+hi:["माँ वरलक्ष्मी की कृपा से आपके घर धन, सेहत और खुशियाँ आएँ। 🪷","आज आप जो भी माँगें, माँ वह सब पूरा करें। 🙏","आपका व्रत अच्छे से संपन्न हो और परिवार सदा सुखी रहे। ✨"]},
+"Eid":{
+en:["May Allah bless you and your family with peace and happiness. 🌙","Wishing you a joyful Eid with family, friends and lots of sheer khurma. 😊","May all your prayers be answered. 🤲"],
+te:["అల్లాహ్ దయతో మీకు, మీ కుటుంబానికి శాంతి, సంతోషం కలగాలి. 🌙","కుటుంబం, స్నేహితులు, షీర్ ఖుర్మాతో ఈ పండగ ఆనందంగా సాగాలి. 😊","మీ దువాలన్నీ కబూల్ అవ్వాలి. 🤲"],
+hi:["अल्लाह आपको और आपके परिवार को अमन और खुशियाँ दे। 🌙","अपनों के साथ, सेवइयों की मिठास के साथ आपकी ईद खुशियों भरी हो। 😊","आपकी सारी दुआएँ कबूल हों। 🤲"]},
+"Christmas":{
+en:["Wishing you a warm and joyful Christmas with your loved ones. 🎄","May the peace of Christmas stay with you all year. ⭐","Hope your home is full of carols, cake and happiness. 🎁"],
+te:["మీ ప్రియమైనవారితో ఈ క్రిస్మస్ ఆనందంగా గడవాలి. 🎄","ఏసుప్రభువు దీవెనలు మీపై ఎప్పుడూ ఉండాలి. ⭐","కేకులు, కరోల్స్, నవ్వులతో మీ ఇల్లు నిండిపోవాలి. 🎁"],
+hi:["अपनों के साथ आपका क्रिसमस खुशियों भरा हो। 🎄","प्रभु यीशु का आशीर्वाद आप पर सदा बना रहे। ⭐","केक, कैरोल और हँसी से आपका घर भरा रहे। 🎁"]},
+"New Year":{
+en:["Wishing you a year full of good health, new chances and happy surprises. 🎉","May this year be your best one yet. 🌟","Here's to new beginnings and lots of happy memories. ✨"],
+te:["ఈ కొత్త సంవత్సరం మీకు ఆరోగ్యం, కొత్త అవకాశాలు, మంచి వార్తలు తీసుకురావాలి. 🎉","ఇప్పటివరకు వచ్చిన అన్ని ఏళ్లకంటే ఈ ఏడాది మీకు బాగా కలిసిరావాలి. 🌟","కొత్త ఆరంభాలతో, తీపి జ్ఞాపకాలతో ఈ ఏడాది సాగాలి. ✨"],
+hi:["नया साल आपके लिए अच्छी सेहत, नए मौके और ढेरों खुशियाँ लाए। 🎉","यह साल आपका अब तक का सबसे अच्छा साल हो। 🌟","नई शुरुआत और प्यारी यादों से भरा हो आपका नया साल। ✨"]},
+"Birthday":{
+en:["Have the happiest birthday and a fantastic year ahead. 🎂","May all your wishes come true this year. 🌟","Hope your day is as special as you are. 🎈"],
+te:["ఈ పుట్టినరోజు మీకు చాలా ప్రత్యేకంగా ఉండాలి, ఈ ఏడాదంతా అద్భుతంగా సాగాలి. 🎂","మీరు కోరుకున్నవన్నీ ఈ ఏడాది నెరవేరాలి. 🌟","నిండు నూరేళ్లు చల్లగా, సంతోషంగా ఉండాలి. 🎈"],
+hi:["आपका आने वाला साल बहुत शानदार रहे। 🎂","इस साल आपकी हर ख्वाहिश पूरी हो। 🌟","आप यूँ ही हँसते-मुस्कुराते रहें, जुग-जुग जिएँ। 🎈"]}
 };
 const SH={
 "Dasara": {
@@ -121,7 +196,7 @@ const SH={
 "m": "सब प्राणियों में शक्ति रूप में रहने वाली देवी को नमस्कार।"
 }
 },
-"Deepavali": {
+"Diwali": {
 "en": {
 "t": "Shubham Karoti Kalyanamarogyam Dhanasampada. Shatrubuddhivinashaya Dipajyotirnamostute.",
 "m": "Salutations to the light of the lamp, which brings goodness, health and wealth and removes ill thoughts."
@@ -296,49 +371,73 @@ const SH={
 }
 }
 };
-const G=[["#ff6f00","#d81b60"],["#1e88e5","#8e24aa"],["#00897b","#43a047"],["#e53935","#fb8c00"]];
+// One clearly different colour per option: orange-pink, blue-purple, teal-green
+const G=[["#ff6f00","#d81b60"],["#1e88e5","#6a1b9a"],["#00897b","#2e7d32"]];
 const LEN={short:1,medium:2,long:3};
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
-function build(k,L,len,order,to,from){
-  const n=LEN[len],P=order.length;
-  const sets=st=>[0,1,2].map(v=>Array.from({length:n},(_,i)=>(v*st+i)%P));
-  const uniq=a=>new Set(a.map(x=>x.slice().sort().join())).size===3;
-  let ix=sets(n);if(!uniq(ix))ix=sets(1);
+const noEmoji=t=>t.replace(/\s*[\p{Extended_Pictographic}️‍]+\s*$/u,"");
+function build(k,L,len,tone,order,forder,to,from){
+  const n=LEN[len],P=order.length,formal=tone==="Formal";
   const sh=SH[k]&&SH[k][L];
-  return ix.map(idx=>({
-    pre:(to?D[L]+" "+to+",\n\n":"")+F[k][0]+" "+F[k][LI[L]]+"!\n\n"+idx.map(i=>order[i]).join(" "),
-    shloka:sh?sh.t:"",meaning:sh?sh.m:"",
-    post:[len==="long"?C[L]:"",from?"— "+from:""].filter(Boolean).join("\n\n"),
-    L,k}));
+  return [0,1,2].map(v=>{
+    const lines=[forder[v%forder.length]];
+    for(let i=0;i<n-1;i++)lines.push(order[(v*(n-1)+i)%P]);
+    return {
+      pre:(to?D[L]+" "+to+",\n\n":"")+F[k][0]+" "+F[k][LI[L]]+"!\n\n"+lines.map(t=>formal?noEmoji(t):t).join(" "),
+      shloka:sh?sh.t:"",meaning:sh?sh.m:"",
+      post:[len==="long"?C[L][tone]:"",from?"— "+from:""].filter(Boolean).join("\n\n"),
+      L,k};
+  });
 }
 //UI
 const $=id=>document.getElementById(id);
 const FONT="system-ui,'Noto Sans Telugu','Noto Sans Devanagari',sans-serif";
 const track=n=>{try{window.goatcounter&&window.goatcounter.count&&window.goatcounter.count({path:n,title:n,event:true})}catch(e){}};
-let texts=[],grads=[],order=[],sel=0,tm;
-Object.keys(F).forEach(f=>$("fest").add(new Option(f)));
+let texts=[],grads=[],order=[],forder=[],sel=0,tm,editing=false;
+Object.keys(F).forEach(f=>$("fest").add(new Option(f,f)));
+function setTones(){
+  const t=$("tone"),was=t.value,list=$("fest").value==="Birthday"?["Warm","Funny","Formal"]:["Warm","Formal"];
+  t.textContent="";list.forEach(o=>t.add(new Option(o)));t.value=list.includes(was)?was:"Warm";
+}
+setTones();
+const need=()=>{if(texts.length)return true;say("Tap ✨ Create 3 wishes first.");return false};
 function say(t,ok){const m=$("msg");m.textContent=t;m.className=ok?"ok":"";clearTimeout(tm);if(t)tm=setTimeout(()=>{m.textContent=""},4500)}
 function flash(b,label){if(!b.dataset.l)b.dataset.l=b.textContent;b.textContent=label;clearTimeout(b._t);b._t=setTimeout(()=>{b.textContent=b.dataset.l},1600)}
-const toText=w=>[w.pre,w.shloka?w.shloka+"\n("+w.meaning+")":"",w.post].filter(Boolean).join("\n\n");
+const toText=w=>[w.pre.trim(),w.shloka?w.shloka+"\n("+w.meaning+")":"",(w.post||"").trim()].filter(Boolean).join("\n\n");
 const cur=()=>toText(texts[sel]);
+const clean=w=>({...w,pre:w.pre.trim(),post:(w.post||"").trim()});
 function render(){
   const box=$("cards");box.textContent="";$("imgbox").hidden=true;
+  $("pickh").hidden=!texts.length;
   texts.forEach((w,i)=>{
-    const d=document.createElement("div"),h=document.createElement("small");
-    d.className="card"+(i===sel?" sel":"");d.tabIndex=0;d.setAttribute("role","radio");d.setAttribute("aria-checked",i===sel?"true":"false");
+    const d=document.createElement("div"),h=document.createElement("small"),ed=editing&&i===sel;
+    d.className="card"+(i===sel?" sel":"")+(ed?" editing":"");d.tabIndex=0;d.setAttribute("role","radio");d.setAttribute("aria-checked",i===sel?"true":"false");
     d.style.background="linear-gradient(135deg,"+grads[i][0]+","+grads[i][1]+")";
-    h.textContent=(i===sel?"✓ Selected · ":"")+"Option "+(i+1);d.append(h);
+    h.textContent=(ed?"✏️ Editing · ":i===sel?"✓ Selected · ":"")+"Option "+(i+1)+(w.edited&&!ed?" · edited":"");d.append(h);
+    if(i===sel){const eb=document.createElement("button");eb.type="button";eb.className="edbtn";eb.textContent=ed?"✔ Done":"✏️ Edit";eb.setAttribute("aria-label",ed?"Finish editing":"Edit this wish");
+      eb.onclick=e=>{e.stopPropagation();toggleEdit()};d.append(eb)}
     const add=(cls,t,lang)=>{if(!t)return null;const e=document.createElement("div");e.className=cls;e.textContent=t;if(lang)e.lang=lang;d.append(e);return e};
-    add("pre",w.pre);
+    const editable=(cls,key,ph)=>{
+      const e=document.createElement("div");e.className=cls;e.textContent=w[key];e.lang=w.L;e.dataset.ph=ph;
+      try{e.contentEditable="plaintext-only"}catch(_){}
+      if(e.contentEditable!=="plaintext-only")e.contentEditable="true";
+      e.oninput=()=>{w[key]=e.innerText.replace(/\n+$/,"");w.edited=true};
+      d.append(e);return e;
+    };
+    const pre=ed?editable("pre","pre","Type your wish"):add("pre",w.pre);
     if(w.shloka){const ar=w.k==="Eid",e=add("shloka "+(ar?"ar":w.L),w.shloka,ar?"ar":w.L);if(ar)e.dir="rtl";add("mean",w.meaning,w.L)}
-    add("post",w.post);
-    const pick=()=>{sel=i;render()};
-    d.onclick=pick;d.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();pick()}};
+    if(ed)editable("post","post","Add a closing line or your name (optional)");else add("post",w.post);
+    const pick=()=>{if(ed)return;editing=false;sel=i;render()};
+    d.onclick=pick;d.onkeydown=e=>{if(e.target===d&&(e.key==="Enter"||e.key===" ")){e.preventDefault();pick()}};
     box.appendChild(d);
+    if(ed)setTimeout(()=>{try{pre.focus()}catch(_){}},0);
   });
+  if(!texts.length){const p=document.createElement("p");p.className="empty";p.textContent="Choose your options, then tap ✨ Create 3 wishes.";box.append(p)}
 }
-function rebuild(){texts=build($("fest").value,$("lang").value,$("len").value,order,$("to").value.trim(),$("from").value.trim());render()}
-function gen(){order=shuffle(B[$("lang").value][$("tone").value]);grads=shuffle(G).slice(0,3);sel=0;rebuild();say("")}
+function rebuild(){texts=build($("fest").value,$("lang").value,$("len").value,$("tone").value,order,forder,$("to").value.trim(),$("from").value.trim());render()}
+function gen(){
+  const L=$("lang").value,t=$("tone").value,fun=t==="Funny"&&FUN[L];editing=false;
+  order=shuffle(fun?fun.more:B[L][t]);forder=shuffle(fun?fun.open:FL[$("fest").value][L]);grads=G;sel=0;rebuild();say("");$("gen").textContent=GEN}
 async function copy(){
   const t=cur();let ok=false;
   try{await navigator.clipboard.writeText(t);ok=true}catch(e){
@@ -403,7 +502,7 @@ const CAN_DL=true;
 let imgUrl="";
 const toDataUrl=b=>new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(b)});
 async function showImage(b){
-  b=b||await makeImage(texts[sel],grads[sel]);
+  b=b||await makeImage(clean(texts[sel]),grads[sel]);
   if(imgUrl)URL.revokeObjectURL(imgUrl);
   imgUrl=URL.createObjectURL(b);
   $("prev").src=await toDataUrl(b);
@@ -414,7 +513,7 @@ async function showImage(b){
   return b;
 }
 $("save").onclick=async()=>{
-  track("save-image");
+  if(!need())return;track("save-image");
   try{
     await showImage();
     if(CAN_DL){$("dl").click();flash($("save"),"Saved ✔");say("PNG downloading. Check your Downloads ✔",1)}
@@ -422,27 +521,30 @@ $("save").onclick=async()=>{
   }catch(e){say("Couldn’t create the image on this device. Use Copy instead.")}
 };
 $("wa").onclick=()=>{
-  track("share-whatsapp");say("Opening WhatsApp…",1);
+  if(!need())return;track("share-whatsapp");say("Opening WhatsApp…",1);
   const u="https://wa.me/?text="+encodeURIComponent(cur());
   setTimeout(()=>{location.href=u},300);
 };
 $("ig").onclick=async()=>{
-  track("share-instagram");
+  if(!need())return;track("share-instagram");
   let b;
   try{
-    b=await makeImage(texts[sel],grads[sel]);
+    b=await makeImage(clean(texts[sel]),grads[sel]);
     const f=new File([b],"festival-wish.png",{type:"image/png"});
     if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f]});flash($("ig"),"Shared ✔");return}
   }catch(e){if(e.name==="AbortError")return}
   try{await showImage(b);say("Image sharing isn’t supported here. Your image is ready below. Save it, then post it from Instagram. Use Copy for the caption.",1)}
   catch(e){if(await copy())say("Couldn’t make the image here, so the text was copied ✔ Paste it in Instagram.",1)}
 };
-$("share").onclick=()=>{track("share-menu");shareNative()};
-$("copy").onclick=()=>{track("copy");copy()};
+$("share").onclick=()=>{if(!need())return;track("share-menu");shareNative()};
+$("copy").onclick=()=>{if(!need())return;track("copy");copy()};
 $("gen").onclick=()=>{track("generate");gen()};
-["fest","lang","tone","len"].forEach(i=>$(i).onchange=gen);
-["to","from"].forEach(i=>$(i).oninput=rebuild);
-gen();
+function toggleEdit(){editing=!editing;render();say(editing?"Edit the text on the card, then tap ✔ Done.":"Changes saved ✔",!editing)}
+const GEN="✨ Create 3 wishes",REGEN="🔄 Regenerate wishes";
+const changed=()=>{if(texts.length){$("gen").textContent=REGEN;say("Tap 🔄 Regenerate wishes to apply your changes.")}};
+$("fest").onchange=()=>{setTones();changed()};
+["lang","tone","len"].forEach(i=>$(i).onchange=changed);
+["to","from"].forEach(i=>$(i).oninput=changed);
 </script>
 </body>
 </html>
