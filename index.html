@@ -32,9 +32,10 @@ button.alt{background:var(--surface);color:var(--fg);border:1px solid var(--line
 .g2,.g3{display:grid;gap:8px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr 1fr}
 #gen{width:100%;margin-top:14px}
 h2{font-size:.9rem;margin:18px 0 6px;opacity:.8;font-weight:600}
-.card{position:relative;margin-top:10px;border-radius:18px;padding:34px 20px 20px;color:#fff;font-weight:600;line-height:1.5;cursor:pointer;border:3px solid transparent;opacity:.78}
-.card.sel{opacity:1;border-color:var(--fg);box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.card{position:relative;margin-top:10px;border-radius:18px;padding:34px 20px 20px;color:#fff;font-weight:600;line-height:1.5;cursor:pointer;border:3px solid transparent;opacity:.55;transform:scale(.96);transition:transform .2s,opacity .2s,box-shadow .2s}
+.card.sel{opacity:1;transform:none;border-color:#fff;box-shadow:0 0 0 4px var(--accent),0 12px 28px rgba(0,0,0,.35)}
 .card small{position:absolute;top:10px;left:16px;font-size:.75rem;background:rgba(0,0,0,.3);padding:2px 10px;border-radius:99px}
+.card.sel small{background:#fff;color:#1c1b1f;font-weight:700;font-size:.8rem;padding:4px 12px;box-shadow:0 2px 6px rgba(0,0,0,.25)}
 .txt{white-space:pre-wrap;text-align:center;font-size:1.02rem}
 [hidden]{display:none!important}#imgbox{margin-top:12px;text-align:center}#imgbox img{max-width:100%;border-radius:14px;border:1px solid var(--line)}#imgbox p{font-size:.85rem;margin:8px 0}.btn{display:inline-block;padding:12px 18px;border-radius:10px;background:var(--accent);color:var(--accent-fg);font-weight:600;text-decoration:none}
 .card{font-family:Inter,"Noto Sans Telugu","Noto Sans Devanagari",system-ui,sans-serif}
@@ -76,7 +77,7 @@ h2{font-size:.9rem;margin:18px 0 6px;opacity:.8;font-weight:600}
 <button id="ig">Instagram</button>
 <button id="share" class="alt">Share…</button>
 <button id="copy" class="alt">Copy</button>
-<button id="save" class="alt" style="grid-column:1/-1">⬇ Save as image (PNG)</button>
+<button id="save" class="alt" style="grid-column:1/-1">🖼️ Share as Image</button>
 </div>
 <div id="imgbox" hidden><img id="prev" alt="Wish image"><p id="imgtip"></p><a id="dl" class="btn" download="festival-wish.png">⬇ Download PNG</a></div>
 <div id="msg" aria-live="polite"></div>
@@ -512,18 +513,18 @@ async function showImage(b){
   try{$("imgbox").scrollIntoView({behavior:"smooth",block:"nearest"})}catch(e){}
   return b;
 }
+// Opens the phone's share sheet with the PNG attached (pick WhatsApp there, like sharing a payment screenshot).
+// Where file sharing isn't supported (most desktops), the image is shown below with a Download button.
 $("save").onclick=async()=>{
-  if(!need())return;track("save-image");
+  if(!need())return;track("share-image");
+  let b;
   try{
-    await showImage();
-    if(CAN_DL){$("dl").click();flash($("save"),"Saved ✔");say("PNG downloading. Check your Downloads ✔",1)}
-    else say("Image ready below. Press and hold it to save.",1);
-  }catch(e){say("Couldn’t create the image on this device. Use Copy instead.")}
-};
-$("wa").onclick=()=>{
-  if(!need())return;track("share-whatsapp");say("Opening WhatsApp…",1);
-  const u="https://wa.me/?text="+encodeURIComponent(cur());
-  setTimeout(()=>{location.href=u},300);
+    b=await makeImage(clean(texts[sel]),grads[sel]);
+    const f=new File([b],"festival-wish.png",{type:"image/png"});
+    if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f]});flash($("save"),"Shared ✔");return}
+  }catch(e){if(e.name==="AbortError")return}
+  try{await showImage(b);say("This browser can’t share images directly. Your image is ready below to download.",1)}
+  catch(e){say("Couldn’t create the image on this device. Use Copy instead.")}
 };
 $("ig").onclick=async()=>{
   if(!need())return;track("share-instagram");
