@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Festival Wishes Generator</title>
 <meta name="theme-color" content="#d81b60">
-<meta name="description" content="Create festival wishes with shlokas in Telugu, English and Hindi and share them on WhatsApp and Instagram.">
+<meta name="description" content="Thoughtful festival and birthday wishes in Telugu, English and Hindi, with verses, ready to share on WhatsApp and Instagram.">
 <script data-goatcounter="https://vinusmiles.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -44,6 +44,8 @@ h2{font-size:.9rem;margin:18px 0 6px;opacity:.8;font-weight:600}
 .shloka.te{font-family:"Noto Serif Telugu",serif}.shloka.hi{font-family:"Noto Serif Devanagari",serif}
 .shloka.en{font-family:"Noto Serif",Georgia,serif;font-style:italic;line-height:1.9}
 .shloka.ar{font-family:"Noto Naskh Arabic",serif;font-size:1.3rem;font-style:normal}
+.shloka{white-space:pre-line}
+.src{font-size:.72rem;font-weight:400;text-align:center;opacity:.8;margin:2px 4px 0}
 .mean{font-size:.9rem;font-weight:400;line-height:1.5;margin:6px 4px 4px;opacity:.97}
 .card .edbtn{position:absolute;top:6px;right:10px;font-size:.8rem;padding:5px 12px;border-radius:99px;background:rgba(0,0,0,.35);color:#fff;border:1px solid rgba(255,255,255,.6);font-weight:600}
 .card.editing .edbtn{background:#fff;color:#1c1b1f;border-color:#fff}
@@ -84,7 +86,9 @@ h2{font-size:.9rem;margin:18px 0 6px;opacity:.8;font-weight:600}
 <div id="msg" aria-live="polite"></div>
 <p id="waweb" hidden>App didn’t open? <a id="wawebl" target="_blank" rel="noopener">Use WhatsApp Web instead</a></p>
 </main>
+<script src="wishes.js"></script>
 <script>
+// Header line per festival: [emoji, English, Telugu, Hindi]. Wish text and verses live in wishes.js.
 const F={
 "Dasara":["🏹","Happy Dasara","దసరా శుభాకాంక్షలు","दशहरा की हार्दिक शुभकामनाएँ"],
 "Diwali":["🪔","Happy Diwali","దీపావళి శుభాకాంక్షలు","दिवाली की हार्दिक शुभकामनाएँ"],
@@ -102,304 +106,50 @@ const F={
 "Birthday":["🎂","Happy Birthday","పుట్టినరోజు శుభాకాంక్షలు","जन्मदिन की हार्दिक शुभकामनाएँ"]
 };
 const LI={en:1,te:2,hi:3};
+// Name line: warm/funny vs formal. Gender-neutral in all three languages.
 const D={en:"Dear",te:"ప్రియమైన",hi:"प्रिय"};
-// Closing line for Long wishes, by tone
-const C={en:{Warm:"Enjoy the day with your loved ones. 🙏",Formal:"With warm regards.",Funny:"Now go cut that cake before someone else does! 🎉"},
-te:{Warm:"అందరితో కలిసి ఆనందంగా గడపండి. 🙏",Formal:"శుభాభినందనలతో.",Funny:"త్వరగా కేక్ కట్ చేయండి, మేం ఎదురుచూస్తున్నాం! 🎉"},
-hi:{Warm:"अपनों के संग यह दिन खूब अच्छे से मनाइए। 🙏",Formal:"सादर।",Funny:"जल्दी केक काटिए, हम इंतज़ार कर रहे हैं! 🎉"}};
-// General lines, by language and tone
-const B={
-en:{Warm:["Wishing you and your family lots of happiness and good health. ❤️","May the days ahead bring you good news and peace of mind. 🌸","Thinking of you today and sending a big hug. 🤗","Hope you have the best day. ✨","May everything you're hoping for fall into place. 🌟"],
-Formal:["Wishing you and your family good health, peace and prosperity.","May this occasion bring happiness to your home.","Wishing you success and contentment in the days ahead.","May the coming days bring you peace and fulfilment.","May your family always be safe and happy."]},
-te:{Warm:["మీకు, మీ కుటుంబానికి ఎప్పుడూ సంతోషం, ఆరోగ్యం ఉండాలి. ❤️","మీ ఇల్లు నవ్వులతో, సందడితో నిండిపోవాలి. 😊","రాబోయే రోజులన్నీ మీకు మంచి వార్తలు తీసుకురావాలి. 🌸","మీ ఇంట్లో ఎప్పుడూ ఇలాగే పండగ వాతావరణం ఉండాలి. ✨","మీరు అనుకున్నవన్నీ జరగాలి. 🌟"],
-Formal:["మీకు, మీ కుటుంబ సభ్యులకు ఆయురారోగ్య ఐశ్వర్యాలు కలగాలని ఆకాంక్షిస్తున్నాను.","ఈ శుభ సందర్భం మీ ఇంట సుఖశాంతులు నింపాలని కోరుకుంటున్నాను.","మీకు అన్ని రంగాల్లో విజయం కలగాలని ఆశిస్తున్నాను.","రాబోయే రోజులు మీకు సంతోషాన్ని, సంతృప్తిని అందించాలి.","మీ కుటుంబమంతా క్షేమంగా, సంతోషంగా ఉండాలని కోరుకుంటున్నాను."]},
-hi:{Warm:["आप और आपका परिवार हमेशा खुश और सेहतमंद रहें। ❤️","आपका घर हँसी-खुशी से भरा रहे। 😊","आने वाले दिन आपके लिए ढेर सारी खुशखबरियाँ लाएँ। 🌸","आपकी ज़िंदगी में यूँ ही रौनक बनी रहे। ✨","आपकी हर मनोकामना पूरी हो। 🌟"],
-Formal:["आपको और आपके परिवार को उत्तम स्वास्थ्य, सुख और समृद्धि की शुभकामनाएँ।","यह शुभ अवसर आपके घर में सुख-शांति लाए।","आपको हर क्षेत्र में सफलता मिले।","आने वाले दिन आपके लिए संतोष और प्रसन्नता से भरे हों।","आपका परिवार सदा कुशल और प्रसन्न रहे।"]}
-};
-// Funny tone: Birthday only. "open" starts each wish, "more" adds lines for Medium/Long
-const FUN={
-en:{open:["Don't count the candles, just enjoy the cake! 🎂","You're not getting older, you're just levelling up! 🎮","Another year older, but your heart is still a kid's! 😜"],
-more:["Eat all the cake you want today, the diet can start tomorrow. 🍰","Make a wish, blow out the candles, and try not to set off the smoke alarm! 🔥","Hope your phone gets so many wishes today that it hangs! 📱","Today you have full permission to be lazy and get spoiled. 😎","So, when and where is the party? Don't forget to invite me! 🥳"]},
-te:{open:["కొవ్వొత్తులు లెక్కపెట్టకండి, కేక్ మీద దృష్టి పెట్టండి! 🎂","వయసు పెరుగుతోంది అనుకోకండి, అనుభవం పెరుగుతోంది అంతే! 😄","ఇంకో ఏడాది పెద్దయ్యారు, కానీ మనసు మాత్రం ఇంకా చిన్నపిల్లలదే! 😜"],
-more:["ఈ రోజు కేక్ ఎంత కావాలంటే అంత తినండి, డైట్ రేపటి నుండి! 🍰","కొవ్వొత్తులు ఊదేటప్పుడు ఫైర్ అలారం మోగకుండా జాగ్రత్త! 🔥","ఈ రోజు మీ ఫోన్ మెసేజ్‌లతో హ్యాంగ్ అయిపోవాలి! 📱","ఈ రోజు పని లేదు, బాధ్యత లేదు, ఫుల్ ఎంజాయ్ మాత్రమే! 😎","పార్టీ ఎప్పుడు? ఎక్కడ? మర్చిపోకుండా నన్ను పిలవండి! 🥳"]},
-hi:{open:["मोमबत्तियाँ मत गिनिए, बस केक पर ध्यान दीजिए! 🎂","उम्र नहीं बढ़ रही, बस तजुर्बा बढ़ रहा है! 😄","एक साल और बड़े हो गए, पर दिल अभी भी बच्चा है! 😜"],
-more:["आज जितना मन करे केक खाइए, डाइट कल से! 🍰","मोमबत्तियाँ बुझाते वक्त ध्यान रखिए, फ़ायर अलार्म न बज जाए! 🔥","आज आपका फ़ोन शुभकामनाओं से हैंग हो जाए! 📱","आज न कोई काम, न कोई टेंशन, बस मस्ती ही मस्ती! 😎","पार्टी कब और कहाँ है? हमें बुलाना मत भूलिए! 🥳"]}
-};
-// Festival-specific lines: each of the 3 wishes opens with a different one
-const FL={
-"Dasara":{
-en:["May Durga Maa give you strength and courage. 🙏","May good always win in your life, just as it did on Vijayadashami. 🏹","Hope everything you start this Dasara brings you success. 🌼"],
-te:["అమ్మవారి దయతో మీకు ఎప్పుడూ ధైర్యం, బలం ఉండాలి. 🙏","చెడుపై మంచి గెలిచిన ఈ రోజున, మీ జీవితంలో కూడా అంతా మంచే జరగాలి. 🏹","ఈ విజయదశమి నాడు మొదలుపెట్టే ప్రతి పనిలో మీకు విజయం కలగాలి. 🌼"],
-hi:["माँ दुर्गा आपको शक्ति और हिम्मत दें। 🙏","जैसे इस दिन बुराई पर अच्छाई की जीत हुई, वैसे ही आपके जीवन में भी सब अच्छा हो। 🏹","विजयादशमी पर आप जो भी शुरू करें, उसमें आपको सफलता मिले। 🌼"]},
-"Diwali":{
-en:["May the diyas light up your home with happiness. 🪔","Wishing you sweets, crackers and a house full of family. 🎆","May Lakshmi Devi bless your home with prosperity. 🪷"],
-te:["దీపాల వెలుగులా మీ ఇల్లంతా సంతోషంతో వెలిగిపోవాలి. 🪔","స్వీట్లు, టపాసులు, కుటుంబమంతా ఒక్కచోట… ఈ దీపావళి అలా హాయిగా సాగాలి. 🎆","లక్ష్మీదేవి అనుగ్రహంతో మీ ఇంట సిరిసంపదలు నిండాలి. 🪷"],
-hi:["दीयों की रोशनी आपके घर को खुशियों से भर दे। 🪔","मिठाइयाँ, पटाखे और पूरा परिवार साथ… ऐसी ही प्यारी हो आपकी दिवाली। 🎆","माँ लक्ष्मी की कृपा से आपके घर में सुख-समृद्धि बनी रहे। 🪷"]},
-"Ugadi":{
-en:["Like Ugadi pachadi, may the new year bring every taste of life, with a lot more sweet. 🌿","Wishing you a fresh start and a wonderful year ahead. 🌸","May the new year bring good health and new beginnings to your family. ✨"],
-te:["ఉగాది పచ్చడిలాగే ఈ కొత్త సంవత్సరం అన్ని రుచుల కలయికగా ఉండాలి, తీపి మాత్రం ఎక్కువగా ఉండాలి. 🌿","కొత్త సంవత్సరం మీకు కొత్త ఆశలు, కొత్త విజయాలు తీసుకురావాలి. 🌸","ఈ ఏడాదంతా మీ కుటుంబానికి ఆరోగ్యం, ఆనందం ఉండాలి. ✨"],
-hi:["उगादी पचड़ी की तरह नया साल ज़िंदगी के हर स्वाद से भरा हो, बस मिठास ज़्यादा हो। 🌿","नया साल आपके लिए नई उम्मीदें और नई कामयाबियाँ लाए। 🌸","पूरा साल आपके परिवार के लिए सेहत और खुशियों भरा रहे। ✨"]},
-"Sankranti":{
-en:["Wishing you a harvest of happiness this Sankranti. 🌾","May your kites fly high and your worries stay on the ground. 🪁","Hope your home is full of rangolis, sweets and family. 🏡"],
-te:["ఈ సంక్రాంతి మీ ఇంట ధాన్యరాశులు, సంతోషాలు నింపాలి. 🌾","మీ గాలిపటాల్లాగే మీ ఆశలు కూడా ఎత్తుకు ఎగరాలి. 🪁","ముంగిట్లో ముగ్గులు, ఇంట్లో పిండివంటలు, చుట్టూ బంధువులు… పండగ అంటే ఇదే! 🏡"],
-hi:["मकर संक्रांति आपके घर ढेर सारी खुशियाँ और बरकत लाए। 🌾","आपकी पतंग की तरह आपके सपने भी ऊँची उड़ान भरें। 🪁","तिल-गुड़ की मिठास आपके रिश्तों में हमेशा बनी रहे। 🍬"]},
-"Vinayaka Chavithi":{
-en:["May Ganapati remove every obstacle from your path. 🐘","Wishing you a home full of kudumulu, laughter and Ganesha's blessings. 🙏","May everything you begin go smoothly with Vinayaka's blessings. ✨"],
-te:["విఘ్నేశ్వరుడు మీ దారిలోని అడ్డంకులన్నీ తొలగించాలి. 🐘","ఉండ్రాళ్లు, కుడుములు, వినాయకుడి ఆశీస్సులతో మీ ఇల్లు కళకళలాడాలి. 🙏","మీరు మొదలుపెట్టే ప్రతి పని నిర్విఘ్నంగా పూర్తవ్వాలి. ✨"],
-hi:["गणपति बप्पा आपकी राह की हर बाधा दूर करें। 🐘","मोदक की मिठास और बप्पा का आशीर्वाद आपके घर हमेशा बना रहे। 🙏","आप जो भी काम शुरू करें, वह बिना रुकावट पूरा हो। ✨"]},
-"Bathukamma":{
-en:["May your life be as colourful as the Bathukamma flowers. 🌼","Wishing you happy days of songs, flowers and togetherness. 🎶","May Gauramma bless your family with health and happiness. 🙏"],
-te:["బతుకమ్మ పూలలా మీ జీవితం రంగులమయం కావాలి. 🌼","ఆటపాటలతో, పూలతో, అందరితో కలిసి ఈ పండగ ఘనంగా జరగాలి. 🎶","గౌరమ్మ దీవెనలతో మీ కుటుంబమంతా చల్లగా ఉండాలి. 🙏"],
-hi:["बतुकम्मा के फूलों की तरह आपका जीवन रंगों से भरा रहे। 🌼","गीतों, फूलों और अपनों के साथ यह त्योहार खूब धूमधाम से मनाएँ। 🎶","गौरी माँ के आशीर्वाद से आपका परिवार सुखी रहे। 🙏"]},
-"Bonalu":{
-en:["May Mahankali Amma always protect you and your family. 🙏","Wishing you a joyful Bonalu full of drums, devotion and family. 🥁","May the Goddess bless your home with good health and peace. 🌺"],
-te:["మహంకాళి అమ్మవారు మిమ్మల్ని, మీ కుటుంబాన్ని ఎల్లప్పుడూ చల్లగా చూడాలి. 🙏","డప్పుల మోతతో, భక్తితో, బంధువులతో ఈ బోనాల పండగ సందడిగా సాగాలి. 🥁","అమ్మవారి దయతో మీ ఇంట ఆరోగ్యం, శాంతి ఉండాలి. 🌺"],
-hi:["महाकाली माँ आपकी और आपके परिवार की सदा रक्षा करें। 🙏","ढोल, भक्ति और अपनों के साथ बोनालु का त्योहार खूब धूमधाम से मनाएँ। 🥁","माँ की कृपा से आपके घर में सेहत और शांति बनी रहे। 🌺"]},
-"Sri Rama Navami":{
-en:["May Sita Rama's blessings bring peace and harmony to your home. 🙏","Hope you enjoy the panakam, vadapappu and the joy of the Kalyanam. 🌼","May you always have the strength to walk the right path, like Sri Rama. 🏹"],
-te:["సీతారాముల కృపతో మీ ఇల్లు సుఖశాంతులతో ఉండాలి. 🙏","పానకం, వడపప్పు, సీతారాముల కళ్యాణం… ఈ శ్రీరామ నవమి మీకు ఆనందంగా సాగాలి. 🌼","శ్రీరాముడిలా ఎప్పుడూ ధర్మమార్గంలో నడిచే బలం మీకు కలగాలి. 🏹"],
-hi:["प्रभु श्रीराम की कृपा से आपके घर सुख-शांति बनी रहे। 🙏","राम जी का आशीर्वाद आपके परिवार पर सदा बना रहे। 🌼","श्रीराम की तरह आप भी हमेशा सच्चाई की राह पर चलें। 🏹"]},
-"Maha Shivaratri":{
-en:["May Lord Shiva bless you with peace, strength and good health. 🔱","Wishing you a calm and blessed night of prayer. 🙏","Om Namah Shivaya. May Mahadev look after you and your family. 🕉️"],
-te:["ఆ పరమశివుని దయతో మీకు ఆయురారోగ్యాలు, మనశ్శాంతి కలగాలి. 🔱","శివనామ స్మరణతో ఈ జాగరణ రాత్రి మీకు ప్రశాంతంగా సాగాలి. 🙏","ఓం నమః శివాయ. ఆ భోళాశంకరుడు మీ కుటుంబాన్ని ఎప్పుడూ కాపాడాలి. 🕉️"],
-hi:["भोलेनाथ की कृपा से आपको सुख, शांति और अच्छी सेहत मिले। 🔱","शिव भक्ति की यह रात आपके मन को शांति से भर दे। 🙏","हर हर महादेव! महादेव आपके परिवार पर सदा कृपा बनाए रखें। 🕉️"]},
-"Varalakshmi Vratham":{
-en:["May Varalakshmi Devi fill your home with wealth, health and happiness. 🪷","May the Goddess grant every wish you pray for today. 🙏","Wishing you a blessed vratham surrounded by family. ✨"],
-te:["వరలక్ష్మీ అమ్మవారి కృపతో మీ ఇంట సిరిసంపదలు, సౌభాగ్యం నిండాలి. 🪷","మీరు కోరుకున్న వరాలన్నీ అమ్మవారు ప్రసాదించాలి. 🙏","వ్రతం చక్కగా జరిగి, మీ కుటుంబమంతా సంతోషంగా ఉండాలి. ✨"],
-hi:["माँ वरलक्ष्मी की कृपा से आपके घर धन, सेहत और खुशियाँ आएँ। 🪷","आज आप जो भी माँगें, माँ वह सब पूरा करें। 🙏","आपका व्रत अच्छे से संपन्न हो और परिवार सदा सुखी रहे। ✨"]},
-"Eid":{
-en:["May Allah bless you and your family with peace and happiness. 🌙","Wishing you a joyful Eid with family, friends and lots of sheer khurma. 😊","May all your prayers be answered. 🤲"],
-te:["అల్లాహ్ దయతో మీకు, మీ కుటుంబానికి శాంతి, సంతోషం కలగాలి. 🌙","కుటుంబం, స్నేహితులు, షీర్ ఖుర్మాతో ఈ పండగ ఆనందంగా సాగాలి. 😊","మీ దువాలన్నీ కబూల్ అవ్వాలి. 🤲"],
-hi:["अल्लाह आपको और आपके परिवार को अमन और खुशियाँ दे। 🌙","अपनों के साथ, सेवइयों की मिठास के साथ आपकी ईद खुशियों भरी हो। 😊","आपकी सारी दुआएँ कबूल हों। 🤲"]},
-"Christmas":{
-en:["Wishing you a warm and joyful Christmas with your loved ones. 🎄","May the peace of Christmas stay with you all year. ⭐","Hope your home is full of carols, cake and happiness. 🎁"],
-te:["మీ ప్రియమైనవారితో ఈ క్రిస్మస్ ఆనందంగా గడవాలి. 🎄","ఏసుప్రభువు దీవెనలు మీపై ఎప్పుడూ ఉండాలి. ⭐","కేకులు, కరోల్స్, నవ్వులతో మీ ఇల్లు నిండిపోవాలి. 🎁"],
-hi:["अपनों के साथ आपका क्रिसमस खुशियों भरा हो। 🎄","प्रभु यीशु का आशीर्वाद आप पर सदा बना रहे। ⭐","केक, कैरोल और हँसी से आपका घर भरा रहे। 🎁"]},
-"New Year":{
-en:["Wishing you a year full of good health, new chances and happy surprises. 🎉","May this year be your best one yet. 🌟","Here's to new beginnings and lots of happy memories. ✨"],
-te:["ఈ కొత్త సంవత్సరం మీకు ఆరోగ్యం, కొత్త అవకాశాలు, మంచి వార్తలు తీసుకురావాలి. 🎉","ఇప్పటివరకు వచ్చిన అన్ని ఏళ్లకంటే ఈ ఏడాది మీకు బాగా కలిసిరావాలి. 🌟","కొత్త ఆరంభాలతో, తీపి జ్ఞాపకాలతో ఈ ఏడాది సాగాలి. ✨"],
-hi:["नया साल आपके लिए अच्छी सेहत, नए मौके और ढेरों खुशियाँ लाए। 🎉","यह साल आपका अब तक का सबसे अच्छा साल हो। 🌟","नई शुरुआत और प्यारी यादों से भरा हो आपका नया साल। ✨"]},
-"Birthday":{
-en:["Have the happiest birthday and a fantastic year ahead. 🎂","May all your wishes come true this year. 🌟","Hope your day is as special as you are. 🎈"],
-te:["ఈ పుట్టినరోజు మీకు చాలా ప్రత్యేకంగా ఉండాలి, ఈ ఏడాదంతా అద్భుతంగా సాగాలి. 🎂","మీరు కోరుకున్నవన్నీ ఈ ఏడాది నెరవేరాలి. 🌟","నిండు నూరేళ్లు చల్లగా, సంతోషంగా ఉండాలి. 🎈"],
-hi:["आपका आने वाला साल बहुत शानदार रहे। 🎂","इस साल आपकी हर ख्वाहिश पूरी हो। 🌟","आप यूँ ही हँसते-मुस्कुराते रहें, जुग-जुग जिएँ। 🎈"]}
-};
-const SH={
-"Dasara": {
-"en": {
-"t": "Ya Devi Sarvabhuteshu Shaktirupena Samsthita. Namastasyai Namastasyai Namastasyai Namo Namah.",
-"m": "Salutations to the Goddess who lives in every being as Shakti, our inner strength."
-},
-"te": {
-"t": "యా దేవీ సర్వభూతేషు శక్తిరూపేణ సంస్థితా। నమస్తస్యై నమస్తస్యై నమస్తస్యై నమో నమః॥",
-"m": "ప్రతి జీవిలో శక్తి రూపంలో నివసించే దేవికి నమస్కారం."
-},
-"hi": {
-"t": "या देवी सर्वभूतेषु शक्तिरूपेण संस्थिता। नमस्तस्यै नमस्तस्यै नमस्तस्यै नमो नमः॥",
-"m": "सब प्राणियों में शक्ति रूप में रहने वाली देवी को नमस्कार।"
+function nameLine(L,tone,to){
+  if(!to)return "";
+  if(tone!=="Formal")return D[L]+" "+to+",\n\n";
+  if(L==="te")return (/గారు$/.test(to)?to.replace(/గారు$/,"గారికి"):to+" గారికి")+",\n\n";
+  if(L==="hi")return "आदरणीय "+to+(/(जी|ji)$/i.test(to)?"":" जी")+",\n\n";
+  return "Dear "+to+",\n\n";
 }
-},
-"Diwali": {
-"en": {
-"t": "Shubham Karoti Kalyanamarogyam Dhanasampada. Shatrubuddhivinashaya Dipajyotirnamostute.",
-"m": "Salutations to the light of the lamp, which brings goodness, health and wealth and removes ill thoughts."
-},
-"te": {
-"t": "శుభం కరోతి కల్యాణమారోగ్యం ధనసంపదా। శత్రుబుద్ధివినాశాయ దీపజ్యోతిర్నమోఽస్తుతే॥",
-"m": "శుభం, ఆరోగ్యం, సంపదలను ఇచ్చి చెడు ఆలోచనలను తొలగించే దీపజ్యోతికి నమస్కారం."
-},
-"hi": {
-"t": "शुभं करोति कल्याणमारोग्यं धनसंपदा। शत्रुबुद्धिविनाशाय दीपज्योतिर्नमोऽस्तुते॥",
-"m": "शुभता, स्वास्थ्य और धन देने वाली तथा बुरे विचार मिटाने वाली दीपज्योति को नमस्कार।"
-}
-},
-"Ugadi": {
-"en": {
-"t": "Shatayurvajradehaya Sarvasampatkaraya Cha. Sarvarishtavinashaya Nimbakandalabhakshanam.",
-"m": "For a long life, a strong body and all prosperity, free from every misfortune, we taste the neem."
-},
-"te": {
-"t": "శతాయుర్వజ్రదేహాయ సర్వసంపత్కరాయ చ। సర్వారిష్టవినాశాయ నిమ్బకన్దలభక్షణమ్॥",
-"m": "నూరేళ్ల ఆయుష్షు, దృఢమైన శరీరం, సంపదలు కలగాలని, అన్ని కష్టాలు తొలగాలని వేప చిగురును స్వీకరిస్తాం."
-},
-"hi": {
-"t": "शतायुर्वज्रदेहाय सर्वसंपत्कराय च। सर्वारिष्टविनाशाय निम्बकन्दलभक्षणम्॥",
-"m": "लंबी आयु, मज़बूत शरीर, समृद्धि और सभी अनिष्टों के नाश के लिए हम नीम का सेवन करते हैं।"
-}
-},
-"Sankranti": {
-"en": {
-"t": "Japakusumasamkasham Kashyapeyam Mahadyutim. Tamorim Sarvapapaghnam Pranatosmi Divakaram.",
-"m": "I bow to the Sun, bright as the hibiscus flower, who removes darkness and all sin."
-},
-"te": {
-"t": "జపాకుసుమసంకాశం కాశ్యపేయం మహాద్యుతిమ్। తమోఽరిం సర్వపాపఘ్నం ప్రణతోఽస్మి దివాకరమ్॥",
-"m": "మందార పుష్పంలా ప్రకాశించే, చీకటిని, పాపాలను తొలగించే సూర్యభగవానునికి నమస్కారం."
-},
-"hi": {
-"t": "जपाकुसुमसंकाशं काश्यपेयं महाद्युतिम्। तमोऽरिं सर्वपापघ्नं प्रणतोऽस्मि दिवाकरम्॥",
-"m": "गुड़हल के फूल जैसे तेजस्वी, अंधकार और पापों को हरने वाले सूर्यदेव को नमस्कार।"
-}
-},
-"Vinayaka Chavithi": {
-"en": {
-"t": "Vakratunda Mahakaya Suryakoti Samaprabha. Nirvighnam Kuru Me Deva Sarvakaryeshu Sarvada.",
-"m": "O Ganesha, bright as a million suns, please remove all obstacles from my work."
-},
-"te": {
-"t": "వక్రతుణ్డ మహాకాయ సూర్యకోటి సమప్రభ। నిర్విఘ్నం కురు మే దేవ సర్వకార్యేషు సర్వదా॥",
-"m": "కోటి సూర్యుల తేజస్సు గల వినాయకా, నా అన్ని పనుల్లో విఘ్నాలు తొలగించు."
-},
-"hi": {
-"t": "वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ। निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा॥",
-"m": "करोड़ों सूर्य के समान तेजस्वी गणेश जी, मेरे सभी कार्य बिना बाधा पूरे करें।"
-}
-},
-"Bathukamma": {
-"en": {
-"t": "Sarvamangalamangalye Shive Sarvarthasadhike. Sharanye Tryambake Gauri Narayani Namostu Te.",
-"m": "Salutations to Gauri, who brings all that is auspicious and gives refuge."
-},
-"te": {
-"t": "సర్వమఙ్గలమాఙ్గల్యే శివే సర్వార్థసాధికే। శరణ్యే త్ర్యమ్బకే గౌరి నారాయణి నమోఽస్తు తే॥",
-"m": "సర్వ శుభాలను ప్రసాదించే, శరణు ఇచ్చే గౌరీదేవికి నమస్కారం."
-},
-"hi": {
-"t": "सर्वमङ्गलमाङ्गल्ये शिवे सर्वार्थसाधिके। शरण्ये त्र्यम्बके गौरि नारायणि नमोऽस्तु ते॥",
-"m": "सब मंगल देने वाली, शरण देने वाली गौरी देवी को नमस्कार।"
-}
-},
-"Bonalu": {
-"en": {
-"t": "Sarvasvarupe Sarveshe Sarvashaktisamanvite. Bhayebhyastrahi No Devi Durge Devi Namostu Te.",
-"m": "O Goddess, protect us from every fear; we bow to you."
-},
-"te": {
-"t": "సర్వస్వరూపే సర్వేశే సర్వశక్తిసమన్వితే। భయేభ్యస్త్రాహి నో దేవి దుర్గే దేవి నమోఽస్తు తే॥",
-"m": "అమ్మా, మమ్మల్ని అన్ని భయాల నుండి కాపాడు; నీకు నమస్కారం."
-},
-"hi": {
-"t": "सर्वस्वरूपे सर्वेशे सर्वशक्तिसमन्विते। भयेभ्यस्त्राहि नो देवि दुर्गे देवि नमोऽस्तु ते॥",
-"m": "हे देवी, हमें सब भयों से बचाओ; आपको नमस्कार।"
-}
-},
-"Sri Rama Navami": {
-"en": {
-"t": "Shrirama Rama Rameti Rame Rame Manorame. Sahasranama Tattulyam Ramanama Varanane.",
-"m": "The name of Rama equals the thousand names of Vishnu."
-},
-"te": {
-"t": "శ్రీరామ రామ రామేతి రమే రామే మనోరమే। సహస్రనామ తత్తుల్యం రామనామ వరాననే॥",
-"m": "రామ నామం విష్ణు సహస్రనామాలకు సమానం."
-},
-"hi": {
-"t": "श्रीराम राम रामेति रमे रामे मनोरमे। सहस्रनाम तत्तुल्यं रामनाम वरानने॥",
-"m": "राम का नाम विष्णु के हज़ार नामों के बराबर है।"
-}
-},
-"Maha Shivaratri": {
-"en": {
-"t": "Om Tryambakam Yajamahe Sugandhim Pushtivardhanam. Urvarukamiva Bandhananmrityormukshiya Mamritat.",
-"m": "We worship Shiva; may he free us from the fear of death and grant us life."
-},
-"te": {
-"t": "ఓం త్ర్యమ్బకం యజామహే సుగన్ధిం పుష్టివర్ధనమ్। ఉర్వారుకమివ బన్ధనాన్మృత్యోర్ముక్షీయ మామృతాత్॥",
-"m": "శివుని ఆరాధిస్తున్నాం; మృత్యు భయం నుండి విడిపించి అమృతత్వాన్ని ప్రసాదించుగాక."
-},
-"hi": {
-"t": "ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम्। उर्वारुकमिव बन्धनान्मृत्योर्मुक्षीय मामृतात्॥",
-"m": "हम शिव की आराधना करते हैं; वे हमें मृत्यु के भय से मुक्त कर अमृत प्रदान करें।"
-}
-},
-"Varalakshmi Vratham": {
-"en": {
-"t": "Om Mahalakshmyai Cha Vidmahe Vishnupatnyai Cha Dhimahi. Tanno Lakshmih Prachodayat.",
-"m": "We meditate on Goddess Lakshmi; may she inspire and guide our minds."
-},
-"te": {
-"t": "ఓం మహాలక్ష్మ్యై చ విద్మహే విష్ణుపత్న్యై చ ధీమహి। తన్నో లక్ష్మీః ప్రచోదయాత్॥",
-"m": "లక్ష్మీదేవిని ధ్యానిస్తున్నాం; ఆమె మా బుద్ధిని ప్రేరేపించి మార్గం చూపుగాక."
-},
-"hi": {
-"t": "ॐ महालक्ष्म्यै च विद्महे विष्णुपत्न्यै च धीमहि। तन्नो लक्ष्मीः प्रचोदयात्॥",
-"m": "हम लक्ष्मी देवी का ध्यान करते हैं; वे हमारी बुद्धि को प्रेरणा दें।"
-}
-},
-"New Year": {
-"en": {
-"t": "Sarve Bhavantu Sukhinah Sarve Santu Niramayah. Sarve Bhadrani Pashyantu Ma Kashchidduhkhabhagbhavet.",
-"m": "May everyone be happy and healthy, see what is good, and be free from sorrow."
-},
-"te": {
-"t": "సర్వే భవన్తు సుఖినః సర్వే సన్తు నిరామయాః। సర్వే భద్రాణి పశ్యన్తు మా కశ్చిద్దుఃఖభాగ్భవేత్॥",
-"m": "అందరూ సుఖంగా, ఆరోగ్యంగా ఉండాలి; అందరికీ మంచి జరగాలి; ఎవరికీ దుఃఖం కలగకూడదు."
-},
-"hi": {
-"t": "सर्वे भवन्तु सुखिनः सर्वे सन्तु निरामयाः। सर्वे भद्राणि पश्यन्तु मा कश्चिद्दुःखभाग्भवेत्॥",
-"m": "सब सुखी हों, सब स्वस्थ हों, सब शुभ देखें, कोई दुखी न हो।"
-}
-},
-"Birthday": {
-"en": {
-"t": "Pashyema Sharadah Shatam. Jivema Sharadah Shatam.",
-"m": "May we see and live for a hundred years."
-},
-"te": {
-"t": "పశ్యేమ శరదః శతమ్। జీవేమ శరదః శతమ్॥",
-"m": "నూరేళ్లు చూడాలని, నూరేళ్లు జీవించాలని ఆశీర్వాదం."
-},
-"hi": {
-"t": "पश्येम शरदः शतम्। जीवेम शरदः शतम्॥",
-"m": "सौ वर्षों तक देखें और जिएँ, यही शुभकामना।"
-}
-},
-"Eid": {
-"en": {
-"t": "تَقَبَّلَ اللهُ مِنَّا وَمِنكُم",
-"m": "May Allah accept the good deeds of us and of you."
-},
-"te": {
-"t": "تَقَبَّلَ اللهُ مِنَّا وَمِنكُم",
-"m": "అల్లాహ్ మన అందరి మంచి పనులను స్వీకరించుగాక."
-},
-"hi": {
-"t": "تَقَبَّلَ اللهُ مِنَّا وَمِنكُم",
-"m": "अल्लाह हम सबके नेक कामों को कबूल करे।"
-}
-},
-"Christmas": {
-"en": {
-"t": "“Glory to God in the highest, and on earth peace, good will toward men.” (Luke 2:14)",
-"m": "Glory to God above, and peace on earth."
-}
-}
-};
 // One clearly different colour per option: orange-pink, blue-purple, teal-green
 const G=[["#ff6f00","#d81b60"],["#1e88e5","#6a1b9a"],["#00897b","#2e7d32"]];
-const LEN={short:1,medium:2,long:3};
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
-const noEmoji=t=>t.replace(/\s*[\p{Extended_Pictographic}️‍]+\s*$/u,"");
-function build(k,L,len,tone,order,forder,to,from){
-  const n=LEN[len],P=order.length,formal=tone==="Formal";
-  const sh=SH[k]&&SH[k][L];
-  return [0,1,2].map(v=>{
-    const lines=[forder[v%forder.length]];
-    for(let i=0;i<n-1;i++)lines.push(order[(v*(n-1)+i)%P]);
+// Picks 3 different ideas (of the 5 written for this festival/language/tone) and builds each at the chosen length.
+// Short = s, Medium = s + m, Long = s + m + l. The previous set for the same combination is avoided on regenerate.
+const PARTS={short:["s"],medium:["s","m"],long:["s","m","l"]};
+const lastPick={};
+function pickIdeas(key,n){
+  let idx,tries=0;
+  do{idx=shuffle([...Array(n).keys()]).slice(0,3);tries++}
+  while(lastPick[key]&&idx.slice().sort().join()===lastPick[key]&&tries<10);
+  lastPick[key]=idx.slice().sort().join();
+  return idx;
+}
+function build(k,L,len,tone,picks,to,from){
+  const pool=WISHES[k][L][tone];
+  const sh=tone!=="Funny"&&SH[k]&&SH[k][L];
+  return picks.map(i=>{
+    const e=pool[i];
     return {
-      pre:(to?D[L]+" "+to+",\n\n":"")+F[k][0]+" "+F[k][LI[L]]+"!\n\n"+lines.map(t=>formal?noEmoji(t):t).join(" "),
-      shloka:sh?sh.t:"",meaning:sh?sh.m:"",
-      post:[len==="long"?C[L][tone]:"",from?"— "+from:""].filter(Boolean).join("\n\n"),
-      L,k};
+      pre:nameLine(L,tone,to)+F[k][0]+" "+F[k][LI[L]]+"!\n\n"+PARTS[len].map(p=>e[p]).join(" "),
+      shloka:sh?sh.t:"",meaning:sh?sh.m:"",src:sh?SH[k].src:"",ar:!!(sh&&sh.ar),
+      post:from?"— "+from:"",
+      L,k,id:e.id};
   });
 }
 //UI
 const $=id=>document.getElementById(id);
 const FONT="system-ui,'Noto Sans Telugu','Noto Sans Devanagari',sans-serif";
 const track=n=>{try{window.goatcounter&&window.goatcounter.count&&window.goatcounter.count({path:n,title:n,event:true})}catch(e){}};
-let texts=[],grads=[],order=[],forder=[],sel=0,tm,editing=false;
+let texts=[],grads=[],picks=[],sel=0,tm,editing=false;
+if(!window.WISHES){document.querySelector("main").insertAdjacentHTML("afterbegin","<p style=\"color:#c62828;font-weight:600\">Wishes couldn’t load (wishes.js is missing). Upload wishes.js next to index.html.</p>")}
 Object.keys(F).forEach(f=>$("fest").add(new Option(f,f)));
 function setTones(){
-  const t=$("tone"),was=t.value,list=$("fest").value==="Birthday"?["Warm","Funny","Formal"]:["Warm","Formal"];
+  const t=$("tone"),was=t.value,list=["Warm","Funny","Formal"];
   t.textContent="";list.forEach(o=>t.add(new Option(o)));t.value=list.includes(was)?was:"Warm";
 }
 setTones();
@@ -428,7 +178,7 @@ function render(){
       d.append(e);return e;
     };
     const pre=ed?editable("pre","pre","Type your wish"):add("pre",w.pre);
-    if(w.shloka){const ar=w.k==="Eid",e=add("shloka "+(ar?"ar":w.L),w.shloka,ar?"ar":w.L);if(ar)e.dir="rtl";add("mean",w.meaning,w.L)}
+    if(w.shloka){const ar=w.ar,e=add("shloka "+(ar?"ar":w.L),w.shloka,ar?"ar":w.L);if(ar)e.dir="rtl";add("mean",w.meaning,w.L);add("src",w.src?"— "+w.src:"","en")}
     if(ed)editable("post","post","Add a closing line or your name (optional)");else add("post",w.post);
     const pick=()=>{if(ed)return;editing=false;sel=i;render()};
     d.onclick=pick;d.onkeydown=e=>{if(e.target===d&&(e.key==="Enter"||e.key===" ")){e.preventDefault();pick()}};
@@ -437,10 +187,10 @@ function render(){
   });
   if(!texts.length){const p=document.createElement("p");p.className="empty";p.textContent="Choose your options, then tap ✨ Create 3 wishes.";box.append(p)}
 }
-function rebuild(){texts=build($("fest").value,$("lang").value,$("len").value,$("tone").value,order,forder,$("to").value.trim(),$("from").value.trim());render()}
+function rebuild(){texts=build($("fest").value,$("lang").value,$("len").value,$("tone").value,picks,$("to").value.trim(),$("from").value.trim());render()}
 function gen(){
-  const L=$("lang").value,t=$("tone").value,fun=t==="Funny"&&FUN[L];editing=false;
-  order=shuffle(fun?fun.more:B[L][t]);forder=shuffle(fun?fun.open:FL[$("fest").value][L]);grads=G;sel=0;rebuild();say("");$("gen").textContent=GEN}
+  const k=$("fest").value,L=$("lang").value,t=$("tone").value;editing=false;
+  picks=pickIdeas(k+"|"+L+"|"+t,WISHES[k][L][t].length);grads=G;sel=0;rebuild();say("");$("gen").textContent=GEN}
 async function copy(){
   const t=cur();let ok=false;
   try{await navigator.clipboard.writeText(t);ok=true}catch(e){
@@ -465,7 +215,7 @@ function wrap(x,t,w){
 function rr(x,a,b,w,h,r){x.beginPath();x.moveTo(a+r,b);x.arcTo(a+w,b,a+w,b+h,r);x.arcTo(a+w,b+h,a,b+h,r);x.arcTo(a,b+h,a,b,r);x.arcTo(a,b,a+w,b,r);x.closePath()}
 async function loadFonts(w){
   try{
-    const fam=w.k==="Eid"?'"Noto Naskh Arabic"':w.L==="te"?'"Noto Serif Telugu"':w.L==="hi"?'"Noto Serif Devanagari"':'"Noto Serif"';
+    const fam=w.ar?'"Noto Naskh Arabic"':w.L==="te"?'"Noto Serif Telugu"':w.L==="hi"?'"Noto Serif Devanagari"':'"Noto Serif"';
     const sans=w.L==="te"?'"Noto Sans Telugu"':w.L==="hi"?'"Noto Sans Devanagari"':"Inter";
     await Promise.race([Promise.all([document.fonts.load("500 40px "+fam,w.shloka||"a"),document.fonts.load("600 40px "+sans,w.pre),document.fonts.load("400 40px "+sans,w.meaning||"a")]),new Promise(r=>setTimeout(r,2000))]);
   }catch(e){}
@@ -476,7 +226,7 @@ async function makeImage(w,g){
   const x=c.getContext("2d"),gr=x.createLinearGradient(0,0,s,s);
   gr.addColorStop(0,g[0]);gr.addColorStop(1,g[1]);x.fillStyle=gr;x.fillRect(0,0,s,s);
   const SANS="Inter,'Noto Sans Telugu','Noto Sans Devanagari',system-ui,sans-serif";
-  const ar=w.k==="Eid";
+  const ar=w.ar;
   const SER=ar?"'Noto Naskh Arabic',serif":w.L==="te"?"'Noto Serif Telugu',serif":w.L==="hi"?"'Noto Serif Devanagari',serif":"'Noto Serif',Georgia,serif";
   const M=96,W=s-2*M,BP=30;
   const plan=sz=>{
